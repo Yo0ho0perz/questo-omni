@@ -8,8 +8,13 @@
   { "id": "ch7",  "title": "فصل ۷ – Field and large‑scale sites" },
   { "id": "ch8",  "title": "فصل ۸ – Containment principles for large‑scale facilities" },
   { "id": "ch9",  "title": "فصل ۹ – Contingency plans and emergency procedures" },
+  { "id": "ch10", "title": "فصل ۱۰ – Biological safety cabinets" },
+  { "id": "ch11", "title": "فصل ۱۱ – Safety equipment" },
+  { "id": "ch12", "title": "فصل ۱۲ – Good microbiological techniques" },
   { "id": "ch13", "title": "فصل ۱۳ – Contingency plans and emergency procedures" },
   { "id": "ch14", "title": "فصل ۱۴ – Disinfection and sterilization" },
+  { "id": "ch15", "title": "فصل ۱۵ – Transport of infectious substances" },
   { "id": "ch16", "title": "فصل ۱۶ – Biosafety and recombinant DNA technology" },
-  { "id": "ch17", "title": "فصل ۱۷ – Hazardous chemicals" }
+  { "id": "ch17", "title": "فصل ۱۷ – Hazardous chemicals" },
+  { "id": "ch18", "title": "فصل ۱۸ – Additional laboratory hazards" }
 ]
