@@ -1,167 +1,185 @@
 [
   {
-    "id": "ch2_q1",
+    "id": "ch7_q1",
     "type": "mcq",
-    "question": "کدام یک از اصول «Primary containment» نیست؟",
+    "question": "در آزمایشگاه‌های سطح ایمنی زیستی 4 (BSL‑4)، قانون دو نفره (two‑person rule) چه معنایی دارد؟",
     "options": [
-      "Biological safety cabinet",
-      "Physical separation by walls",
-      "Personal protective equipment",
-      "Use of autoclave for waste"
-    ],
-    "answer": 3,
-    "hint": "Primary containment مربوط به تجهیزات داخل آزمایشگاه است.",
-    "extra": "اتوکلاو بخشی از secondary containment و waste management است.",
-    "page": 4
-  },
-  {
-    "id": "ch2_q2",
-    "type": "mcq",
-    "question": "کدام نوع کابین ایمنی زیستی (BSC) برای کار با آرایه‌های ویروسی توصیه می‌شود؟",
-    "options": [
-      "Class I",
-      "Class II A1",
-      "Class II B2",
-      "Class III"
-    ],
-    "answer": 2,
-    "hint": "B2 از هوای اتاق مستقل است و برای ویروس‌ها مناسب است.",
-    "extra": "Class III کابین کاملاً بسته است ولی معمولاً در BSL‑4 به کار می‌رود.",
-    "page": 5
-  },
-  {
-    "id": "ch2_q3",
-    "type": "short",
-    "question": "حداقل سرعت جریان هوای ورودی به یک BSC Class II چقدر است؟",
-    "answer": "0.38 m/s",
-    "hint": "در مشخصات فنی کابین ذکر شده.",
-    "extra": "این سرعت برای حفظ حفاظت اپراتور ضروری است.",
-    "page": 5
-  },
-  {
-    "id": "ch2_q4",
-    "type": "mcq",
-    "question": "برای عملکرد صحیح BSC باید فیلترهای HEPA با چه کارایی داشته باشند؟",
-    "options": [
-      "≥ 95% at 0.3 µm",
-      "≥ 99.97% at 0.3 µm",
-      "≥ 99% at 0.1 µm",
-      "≥ 90% at 1 µm"
+      "فقط دو نفر اجازه ورود همزمان دارند",
+      "هیچ فردی نباید به تنهایی کار کند",
+      "فقط دو بار در روز باید تهویه انجام شود",
+      "تنها دو دستگاه HEPA باید نصب گردد"
     ],
     "answer": 1,
-    "hint": "کارایی HEPA ≥ 99.97% در اندازه 0.3 µm است.",
-    "extra": "این استاندارد مانع خروج آئروسل‌های میکروبی می‌شود.",
-    "page": 6
+    "hint": "ناظر ثابتی وجود ندارد که تنها کار را تایید کند",
+    "extra": "این قانون برای افزایش ایمنی و امکان کمک سریع در مواقع اضطراری است.",
+    "page": 26
   },
   {
-    "id": "ch2_q5",
+    "id": "ch7_q2",
     "type": "short",
-    "question": "در چه مرحله‌ای از کار با BSC باید یک سطح کار ضدعفونی شود؟",
-    "answer": "قبل و بعد از هر کار",
-    "hint": "سطح کار باید قبل شروع و پس از پایان کار پاک شود.",
-    "extra": "ضدعفونی سطح کاهش دهنده آلودگی متقاطع است.",
-    "page": 6
+    "question": "تفاوت اصلی بین آزمایشگاه Class III و آزمایشگاه suit در چیست؟",
+    "answer": "Class III از glove‑box گازمحکم استفاده می‌کند اما suit laboratory از positive‑pressure suit بهره می‌برد",
+    "hint": "نوع primary containment را مقایسه کنید",
+    "extra": "یادگیری با تصور یک glove‑box نسبت به یک کامپیوتری که داخلش لباس فضانوردی پوشیده‌اید آسان‌تر می‌شود.",
+    "page": 26
   },
   {
-    "id": "ch2_q6",
+    "id": "ch7_q3",
     "type": "mcq",
-    "question": "کدام روش بیشتر برای استریل کردن ابزار جامد استفاده می‌شود؟",
+    "question": "کدام یک از موارد زیر درباره فیلتر HEPA صادق نیست؟",
     "options": [
-      "اتوکلاو با بخار تحت فشار",
-      "اشعه UV داخلی",
-      "غوطه‌وری در اتانول",
-      "تابش گاما"
-    ],
-    "answer": 0,
-    "hint": "استریل اتوکلاو قابل اطمینان‌ترین روش است.",
-    "extra": "UV فقط سطح را ضدعفونی می‌کند، استریل نمی‌کند.",
-    "page": 7
-  },
-  {
-    "id": "ch2_q7",
-    "type": "mcq",
-    "question": "کدام یک از موارد زیر جزو اقدامات «Good Microbiological Technique» نیست؟",
-    "options": [
-      "بستن دور بازو و شستن دست‌ها",
-      "برچسب‌گذاری شیشه‌آلات",
-      "پاشیدن culture medium به درون BSC",
-      "جلوگیری از تمیز کردن بیش از حد منطقه کار"
+      "کارایی 99.97٪ برای ذرات 0.3 میکرون دارد",
+      "باید سالی یکبار تست و zertify شود",
+      "می‌تواند تمام ویروس‌های شناخته شده را حذف کند",
+      "نیازی به محفظه under negative pressure ندارد"
     ],
     "answer": 3,
-    "hint": "GMT شامل حفظ نظم و پرهیز از ایجاد آئروسل‌های غیرضروری است.",
-    "extra": "تمیز کردن بیش از حد ممکن است آلودگی را به مناطق دیگر منتقل کند.",
-    "page": 8
+    "hint": "HEPA ذرات را به دام می‌اندازد اما ممکن است…",
+    "extra": "HEPA filter برای ذرات ≥0.3 µm مؤثر است؛ بسیاری از ویروس‌ها ممکن است به ذرات بزرگ‌تر چسبیده باشند.",
+    "page": 21
   },
   {
-    "id": "ch2_q8",
+    "id": "ch7_q4",
     "type": "short",
-    "question": "اولین اقدامی که پس از ریختن تصادفی محلول حاوی میکروب انجام می‌دهید چیست؟",
-    "answer": "پوشیدن دستکش جدید و ضدعفونی کردن سطح",
-    "hint": "ابتدا ایمنی خود را تامین کنید.",
-    "extra": "سپس گزارش دهید و با مواد ضدعفونی‌کننده مناسب سطح را پاک کنید.",
-    "page": 8
+    "question": "هدف از airlock در آزمایشگاه‌های BSL‑3 چیست؟",
+    "answer": "ایجاد اختلاف فشار و جلوگیری از نشت هوا و آلودگی",
+    "hint": "مانند یک بالاترین درِ دو مرحله‌ای عمل می‌کند",
+    "extra": "یادآوری: airlock مانند راهروی میانی ماهواره و فضاپیماست.",
+    "page": 22
   },
   {
-    "id": "ch2_q9",
+    "id": "ch7_q5",
     "type": "mcq",
-    "question": "کدام عامل در انتخاب روش دفع زباله بیولوژیک (biohazard) مهم‌ترین است؟",
+    "question": "در کدام سطح ایمنی زیستی (BSL) باید effluent decontamination انجام شود؟",
     "options": [
-      "نوع عامل (RG)",
-      "سایز ظروف",
-      "رنگ زباله‌دان",
-      "دمای اتاق"
+      "BSL‑1 و BSL‑2",
+      "فقط BSL‑3",
+      "BSL‑3 و BSL‑4",
+      "هیچ یک"
     ],
-    "answer": 0,
-    "hint": "گروه خطر عامل اصلی تعیین روش دفع است.",
-    "extra": "زباله‌های RG2 از RG1 جدا و اتوکلاو می‌شوند.",
-    "page": 9
+    "answer": 2,
+    "hint": "نگاه کنید جدول summary سطح‌ها",
+    "extra": "BSL‑3 دست‌کم effluent treatment و BSL‑4 الزامی است.",
+    "page": 24
   },
   {
-    "id": "ch2_q10",
-    "type": "mcq",
-    "question": "کدام یک از ملزومات PPE برای کار در BSL‑2 است؟",
-    "options": [
-      "لباس آزمایشگاهی و دستکش",
-      "لباس کامل مثبت فشار",
-      "ماسک N95 همیشه الزامی است",
-      "کفش‌های یک‌بارمصرف"
-    ],
-    "answer": 0,
-    "hint": "PPE پایه شامل روپوش و دستکش است.",
-    "extra": "در صورت احتمال آئروسل، ماسک یا محافظ صورت افزوده می‌شود.",
-    "page": 9
-  },
-  {
-    "id": "ch2_q11",
+    "id": "ch7_q6",
     "type": "short",
-    "question": "در BSL‑2 چه موقع از فیلتر چشم یا شیلد صورت استفاده می‌شود؟",
-    "answer": "هنگام کار با آئروسل یا مواد پاششی",
-    "hint": "خطر ورود به چشم با قطرات ناشی از آئروسل وجود دارد.",
-    "extra": "محافظ چشم از آسیب مخاط جلوگیری می‌کند.",
-    "page": 10
+    "question": "سطح ABSL مناسب برای کار با جانوران آلوده‌شده به عوامل Risk Group 3 کدام است؟",
+    "answer": "ABSL‑3",
+    "hint": "مطابق جدول Animal facility containment levels",
+    "extra": "ABSL‑3 شامل BSC کلاس I/II و کنترل دسترسی است.",
+    "page": 28
   },
   {
-    "id": "ch2_q12",
+    "id": "ch7_q7",
     "type": "mcq",
-    "question": "کدام توصیف درباره جریان هوای آزمایشگاه BSL‑1 صحیح است؟",
+    "question": "برای نگهداری حشرات پروازی (flying insects) آلوده در آزمایشگاه، کدام مورد ضروری است؟",
     "options": [
-      "فشار مثبت به راهرو دارد",
-      "فشار منفی به راهرو دارد",
-      "بدون کنترل فشار است",
-      "فشار مساوی با بیرون دارد"
+      "استفاده از Class III BSC",
+      "استفاده از double‑netted cages",
+      "استفاده از positive‑pressure suit",
+      "استفاده از pre‑vacuum autoclave"
     ],
-    "answer": 3,
-    "hint": "BSL‑1 نیازی به کنترل فشار ندارد.",
-    "extra": "فشار مساوی یا جزئی مثبت دارد تا ورود ذرات کاهش یابد.",
-    "page": 10
+    "answer": 1,
+    "hint": "حشرات کوچک را چطور محبوس می‌کنیم؟",
+    "extra": "قفس‌های دوبل‌لایه از فرار حشرات جلوگیری می‌کنند.",
+    "page": 32
   },
   {
-    "id": "ch2_q13",
+    "id": "ch7_q8",
     "type": "short",
-    "question": "در BSC Class II چه درصدی از هوا قبل از خروج از کابین فیلتر HEPA می‌شود؟",
-    "answer": "100%",
-    "hint": "تمام هوای خروجی HEPA فیلتر است.",
-    "extra": "این موجب تضمین عدم نشت آئروسل می‌شود.",
-    "page": 6
+    "question": "در مدیریت ABSL‑4، چرا استفاده از دو نفر ضروری است؟",
+    "answer": "برای ایمنی متقابل و امکان کمک فوری در شرایط اضطراری",
+    "hint": "two‑person rule",
+    "extra": "مانند نقشه‌خوانی در مسیر کوهستان، هیچ‌کس تنها نیست.",
+    "page": 26
+  },
+  {
+    "id": "ch7_q9",
+    "type": "mcq",
+    "question": "کدام ویژگی در آزمایشگاه suit laboratory وجود دارد؟",
+    "options": [
+      "پوشش laminar flow برای product protection",
+      "استفاده از glove‑box گازمحکم",
+      "وجود positive‑pressure supplied‑air suit",
+      "عدم نیاز به airlock"
+    ],
+    "answer": 2,
+    "hint": "لباس شبیه فضانوردها",
+    "extra": "هوای suit از HEPA‑filtered supply و با redundancy می‌آید.",
+    "page": 26
+  },
+  {
+    "id": "ch7_q10",
+    "type": "short",
+    "question": "حداقل فرکانس تأیید (certification) سالانه برای BSC چیست؟",
+    "answer": "یکبار در سال توسط تکنسین واجد شرایط",
+    "hint": "recertification حداقل …",
+    "extra": "برای اطمینان از کارکرد HEPA و face velocity است.",
+    "page": 59
+  },
+  {
+    "id": "ch7_q11",
+    "type": "mcq",
+    "question": "کدام یک از اقدامات زیر در مدیریت invertebrate precautions لازم نیست؟",
+    "options": [
+      "اتاق جدا برای invertebrate آلوده و غیرآلوده",
+      "نصب insect‑proof screens روی پنجره‌ها",
+      "استفاده از positive‑pressure suit",
+      "فراهم کردن insecticide sprays"
+    ],
+    "answer": 2,
+    "hint": "لباس فضانورد برای حشرات؟",
+    "extra": "positive‑pressure suit برای آدم‌ها، نه حشرات.",
+    "page": 32
+  },
+  {
+    "id": "ch7_q12",
+    "type": "short",
+    "question": "چرا اتاق‌های حشرات باید قابلیت sealing for fumigation را داشته باشند؟",
+    "answer": "برای تضمین نفوذ گاز ضدعفونی‌کننده و کنترل آفات",
+    "hint": "fumigation بدون نشت گاز ممکن نیست",
+    "extra": "تصور کنید اتاق غواصی است که نباید نشتی هوا داشته باشد.",
+    "page": 32
+  },
+  {
+    "id": "ch7_q13",
+    "type": "mcq",
+    "question": "در BSL‑3، چه نوع ventilation system باید وجود داشته باشد؟",
+    "options": [
+      "positive pressure با recirculation",
+      "controlled inward directional airflow",
+      "natural ventilation بدون کنترل",
+      "ventilation با HEPA تنها در supply"
+    ],
+    "answer": 1,
+    "hint": "هوا باید به داخل کشیده شود",
+    "extra": "directional airflow به سمت داخل از Lab به فضای بیرون است.",
+    "page": 21
+  },
+  {
+    "id": "ch7_q14",
+    "type": "short",
+    "question": "effluent decontamination در آزمایشگاه BSL‑4 چگونه انجام می‌شود؟",
+    "answer": "با heat treatment پیش از تخلیه نهایی",
+    "hint": "گرما روش ترجیحی است",
+    "extra": "آب دوش و توالت نیازی به تصفیه ندارد.",
+    "page": 27
+  },
+  {
+    "id": "ch7_q15",
+    "type": "mcq",
+    "question": "در یک animal facility – ABSL‑2، کدام یک باید فراهم باشد؟",
+    "options": [
+      "Class III BSC",
+      "anteroom with shower",
+      "Class I or II BSC برای آئروسل‌ها",
+      "positive‑pressure suit"
+    ],
+    "answer": 2,
+    "hint": "برای ورود تمیز و خروج پاکیزه",
+    "extra": "ABSL‑2 به BSC کلاس I/II نیاز دارد و اتاق انتظار با دوش اختیاری است.",
+    "page": 29
   }
 ]
