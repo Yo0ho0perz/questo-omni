@@ -118,18 +118,30 @@ onMounted(() => {
 
 function recordAnswer(ok: boolean, idx: number) {
   record(props.q.id, ok, idx)
+  $fetch('/api/log-action', { method: 'POST', body: { msg: `📝 #${props.q.id} ${String.fromCharCode(65+idx)} ${ok?'✅':'❌'}` } }).catch(()=>{})
   lastChosen.value = idx
   lastCorrect.value = ok
   revealed.value = true
 }
 
 function submitShort() {
-  const ok = user.value.trim().toLowerCase() === String(props.q.answer).toLowerCase()
-  recordAnswer(ok, -1)
+//   const ok = user.value.trim().toLowerCase() === String(props.q.answer).toLowerCase()
+//   recordAnswer(ok, -1)
+
+    const answerText = user.value.trim()
+  const ok = answerText.toLowerCase() === String(props.q.answer).toLowerCase()
+  record(props.q.id, ok, undefined, answerText)                // pass short text
+  // ⚡ log the short answer text
+  $fetch('/api/log-action', { method: 'POST', body: { msg: `📝 #${props.q.id} "${answerText}" ${ok?'✅':'❌'}` } }).catch(()=>{})
+
 }
 
 function reveal() {
-  revealed.value = true
+
+    revealed.value = true
+  // ⚡ log show‑answer click
+  $fetch('/api/log-action', { method: 'POST', body: { msg: `👁️ #${props.q.id}` } }).catch(()=>{})
+
 }
 
 function resetAnswer() {

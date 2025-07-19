@@ -12,10 +12,12 @@ export default defineNuxtConfig({
     '@vite-pwa/nuxt'
   ],
    runtimeConfig: {
-    public: {
-      appVersion: version,
-      refreshInterval: 6 * 60 * 60 * 1_000, // 6 h
-    },
+    telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
+    telegramChatId: process.env.TELEGRAM_CHAT_ID,
+      public: {
+        appVersion: version,
+        refreshInterval: 6 * 60 * 60 * 1_000, // 6 h
+      },
   },
 
   pwa: {
