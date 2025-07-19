@@ -1,167 +1,179 @@
 [
   {
-    "id": "ch2_q1",
+    "id": "ch9_q1",
     "type": "mcq",
-    "question": "کدام یک از اصول «Primary containment» نیست؟",
+    "question": "تفاوت اصلی بین مفاهیم «laboratory biosafety» و «laboratory biosecurity» چیست؟",
     "options": [
-      "Biological safety cabinet",
-      "Physical separation by walls",
-      "Personal protective equipment",
-      "Use of autoclave for waste"
+      "Biosafety جلوگری از انتشار تصادفی است، biosecurity جلوگری از سوءنیت",
+      "Biosafety شامل فیلتر هواست، biosecurity شامل فیلتر آب",
+      "biosafety هزینه بالاتری دارد",
+      "biosecurity فقط برای BSL-4 است"
     ],
-    "answer": 3,
-    "hint": "Primary containment مربوط به تجهیزات داخل آزمایشگاه است.",
-    "extra": "اتوکلاو بخشی از secondary containment و waste management است.",
-    "page": 4
+    "answer": 0,
+    "hint": "intentional vs unintentional",
+    "extra": "biosafety پیشگیری از تماس تصادفی، biosecurity پیشگیری از سوءاستفاده عمدی :contentReference[oaicite:15]{index=15}",
+    "page": 47
   },
   {
-    "id": "ch2_q2",
-    "type": "mcq",
-    "question": "کدام نوع کابین ایمنی زیستی (BSC) برای کار با آرایه‌های ویروسی توصیه می‌شود؟",
-    "options": [
-      "Class I",
-      "Class II A1",
-      "Class II B2",
-      "Class III"
-    ],
-    "answer": 2,
-    "hint": "B2 از هوای اتاق مستقل است و برای ویروس‌ها مناسب است.",
-    "extra": "Class III کابین کاملاً بسته است ولی معمولاً در BSL‑4 به کار می‌رود.",
-    "page": 5
-  },
-  {
-    "id": "ch2_q3",
+    "id": "ch9_q2",
     "type": "short",
-    "question": "حداقل سرعت جریان هوای ورودی به یک BSC Class II چقدر است؟",
-    "answer": "0.38 m/s",
-    "hint": "در مشخصات فنی کابین ذکر شده.",
-    "extra": "این سرعت برای حفظ حفاظت اپراتور ضروری است.",
-    "page": 5
+    "question": "یکی از ارکان اصلی یک برنامه biosecurity چیست؟",
+    "answer": "inventory مداوم و بایگانی حمل‌ونقل مواد",
+    "hint": "updated inventory",
+    "extra": "حسابرسی و ثبت دقیق انتقال‌ها ضروری است :contentReference[oaicite:16]{index=16}",
+    "page": 48
   },
   {
-    "id": "ch2_q4",
+    "id": "ch9_q3",
     "type": "mcq",
-    "question": "برای عملکرد صحیح BSC باید فیلترهای HEPA با چه کارایی داشته باشند؟",
+    "question": "چه کسی باید در تهیه برنامه biosecurity شرکت کند؟",
     "options": [
-      "≥ 95% at 0.3 µm",
-      "≥ 99.97% at 0.3 µm",
-      "≥ 99% at 0.1 µm",
-      "≥ 90% at 1 µm"
+      "تنها مدیر آزمایشگاه",
+      "scientific directors تا security staff",
+      "فقط biosafety officer",
+      "فقط personnel IT"
     ],
     "answer": 1,
-    "hint": "کارایی HEPA ≥ 99.97% در اندازه 0.3 µm است.",
-    "extra": "این استاندارد مانع خروج آئروسل‌های میکروبی می‌شود.",
-    "page": 6
+    "hint": "broad input",
+    "extra": "از مدیران علمی تا نیروهای امنیتی باید مشارکت کنند :contentReference[oaicite:17]{index=17}",
+    "page": 48
   },
   {
-    "id": "ch2_q5",
+    "id": "ch9_q4",
     "type": "short",
-    "question": "در چه مرحله‌ای از کار با BSC باید یک سطح کار ضدعفونی شود؟",
-    "answer": "قبل و بعد از هر کار",
-    "hint": "سطح کار باید قبل شروع و پس از پایان کار پاک شود.",
-    "extra": "ضدعفونی سطح کاهش دهنده آلودگی متقاطع است.",
-    "page": 6
+    "question": "چه مدراک مالی باید در biosecurity نگهداری شود؟",
+    "answer": "لیست به‌روز شده موجودی مواد و محل نگهداری",
+    "hint": "storage location",
+    "extra": "inventory دقیق مواد با محل نگهداری فراهم شود :contentReference[oaicite:18]{index=18}",
+    "page": 48
   },
   {
-    "id": "ch2_q6",
+    "id": "ch9_q5",
     "type": "mcq",
-    "question": "کدام روش بیشتر برای استریل کردن ابزار جامد استفاده می‌شود؟",
+    "question": "در biosecurity باید چگونه با discrepancies در inventory برخورد کرد؟",
     "options": [
-      "اتوکلاو با بخار تحت فشار",
-      "اشعه UV داخلی",
-      "غوطه‌وری در اتانول",
-      "تابش گاما"
+      "نادیده گرفتن",
+      "گزارش و تحقیق و اصلاح",
+      "حذف محل ذخیره",
+      "افزایش موجودی"
+    ],
+    "answer": 1,
+    "hint": "investigate",
+    "extra": "باید گزارش، تحقیق و رفع نقص شود :contentReference[oaicite:19]{index=19}",
+    "page": 48
+  },
+  {
+    "id": "ch9_q6",
+    "type": "short",
+    "question": "training مخصوص biosecurity چه تفاوتی با biosafety دارد؟",
+    "answer": "تمرکز بر روی امنیت و جلوگیری از سرقت/سوءاستفاده",
+    "hint": "security roles",
+    "extra": "شامل آموزش نقش‌ها و رویه‌های امنیتی است :contentReference[oaicite:20]{index=20}",
+    "page": 48
+  },
+  {
+    "id": "ch9_q7",
+    "type": "mcq",
+    "question": "کدام مورد از ارکان biosecurity نیست؟",
+    "options": [
+      "inventory control",
+      "risk assessment",
+      "product labeling",
+      "incident response protocol"
+    ],
+    "answer": 2,
+    "hint": "materials focus",
+    "extra": "برچسب‌گذاری محصولات بخشی از biosafety است، نه biosecurity :contentReference[oaicite:21]{index=21}",
+    "page": 47
+  },
+  {
+    "id": "ch9_q8",
+    "type": "short",
+    "question": "نقش ارزیابی تهدید (threat assessment) در biosecurity چیست؟",
+    "answer": "شناسایی مواد جذاب برای سوءاستفاده‌کنندگان",
+    "hint": "attractive materials",
+    "extra": "کمک می‌کند تا مواد حساس شناسایی شوند :contentReference[oaicite:22]{index=22}",
+    "page": 48
+  },
+  {
+    "id": "ch9_q9",
+    "type": "mcq",
+    "question": "چه عاملی نباید باعث اختلال در فعالیت‌های روزمره research شود؟",
+    "options": [
+      "بوروکراسی امنیتی غیرضروری",
+      "غفلت از فیلتر HEPA",
+      "آموزش ناکافی",
+      "inventory دقیق"
     ],
     "answer": 0,
-    "hint": "استریل اتوکلاو قابل اطمینان‌ترین روش است.",
-    "extra": "UV فقط سطح را ضدعفونی می‌کند، استریل نمی‌کند.",
-    "page": 7
+    "hint": "not impede research",
+    "extra": "security نباید کاری research را مختل کند :contentReference[oaicite:23]{index=23}",
+    "page": 48
   },
   {
-    "id": "ch2_q7",
+    "id": "ch9_q10",
+    "type": "short",
+    "question": "در biosecurity باید چه نقشی برای law enforcement تعیین شود؟",
+    "answer": "تعریف نقطه تماس و مسئولیت‌ها هنگام نقص امنیتی",
+    "hint": "clear roles",
+    "extra": "نقش‌ها باید در صورت رویداد امنیتی مشخص باشند :contentReference[oaicite:24]{index=24}",
+    "page": 48
+  },
+  {
+    "id": "ch9_q11",
     "type": "mcq",
-    "question": "کدام یک از موارد زیر جزو اقدامات «Good Microbiological Technique» نیست؟",
+    "question": "برای کدامیک از موارد زیر برنامه biosecurity ضروری‌تر است؟",
     "options": [
-      "بستن دور بازو و شستن دست‌ها",
-      "برچسب‌گذاری شیشه‌آلات",
-      "پاشیدن culture medium به درون BSC",
-      "جلوگیری از تمیز کردن بیش از حد منطقه کار"
+      "Risk Group 1 cultures",
+      "Risk Group 2 diagnostic samples",
+      "Risk Group 3 agent stocks",
+      "تمام موارد"
     ],
     "answer": 3,
-    "hint": "GMT شامل حفظ نظم و پرهیز از ایجاد آئروسل‌های غیرضروری است.",
-    "extra": "تمیز کردن بیش از حد ممکن است آلودگی را به مناطق دیگر منتقل کند.",
-    "page": 8
+    "hint": "all levels",
+    "extra": "تمام سطوح باید biosecurity مناسب داشته باشند :contentReference[oaicite:25]{index=25}",
+    "page": 48
   },
   {
-    "id": "ch2_q8",
+    "id": "ch9_q12",
     "type": "short",
-    "question": "اولین اقدامی که پس از ریختن تصادفی محلول حاوی میکروب انجام می‌دهید چیست؟",
-    "answer": "پوشیدن دستکش جدید و ضدعفونی کردن سطح",
-    "hint": "ابتدا ایمنی خود را تامین کنید.",
-    "extra": "سپس گزارش دهید و با مواد ضدعفونی‌کننده مناسب سطح را پاک کنید.",
-    "page": 8
+    "question": "چه جنبه‌ای از اطلاعات در biosecurity باید محافظت شود؟",
+    "answer": "دسترسی به داده‌های حساس و محل نگهداری مواد",
+    "hint": "personnel access",
+    "extra": "اطلاعات دسترسی و موقعیت مواد باید محرمانه باشد :contentReference[oaicite:26]{index=26}",
+    "page": 48
   },
   {
-    "id": "ch2_q9",
+    "id": "ch9_q13",
     "type": "mcq",
-    "question": "کدام عامل در انتخاب روش دفع زباله بیولوژیک (biohazard) مهم‌ترین است؟",
+    "question": "کدام فعالیت مربوط به biosecurity نیست؟",
     "options": [
-      "نوع عامل (RG)",
-      "سایز ظروف",
-      "رنگ زباله‌دان",
-      "دمای اتاق"
+      "اصرار بر لباس شخصی در آزمایشگاه",
+      "حسابرسی موجودی",
+      "آموزش امنیتی",
+      "برنامه پاسخ به حادثه"
     ],
     "answer": 0,
-    "hint": "گروه خطر عامل اصلی تعیین روش دفع است.",
-    "extra": "زباله‌های RG2 از RG1 جدا و اتوکلاو می‌شوند.",
-    "page": 9
+    "hint": "lab clothing",
+    "extra": "لباس شخصی ربطی به biosecurity ندارد :contentReference[oaicite:27]{index=27}",
+    "page": 47
   },
   {
-    "id": "ch2_q10",
-    "type": "mcq",
-    "question": "کدام یک از ملزومات PPE برای کار در BSL‑2 است؟",
-    "options": [
-      "لباس آزمایشگاهی و دستکش",
-      "لباس کامل مثبت فشار",
-      "ماسک N95 همیشه الزامی است",
-      "کفش‌های یک‌بارمصرف"
-    ],
-    "answer": 0,
-    "hint": "PPE پایه شامل روپوش و دستکش است.",
-    "extra": "در صورت احتمال آئروسل، ماسک یا محافظ صورت افزوده می‌شود.",
-    "page": 9
-  },
-  {
-    "id": "ch2_q11",
+    "id": "ch9_q14",
     "type": "short",
-    "question": "در BSL‑2 چه موقع از فیلتر چشم یا شیلد صورت استفاده می‌شود؟",
-    "answer": "هنگام کار با آئروسل یا مواد پاششی",
-    "hint": "خطر ورود به چشم با قطرات ناشی از آئروسل وجود دارد.",
-    "extra": "محافظ چشم از آسیب مخاط جلوگیری می‌کند.",
-    "page": 10
+    "question": "چرا مسئولیت‌ها در biosecurity باید مستند شوند؟",
+    "answer": "برای شفافیت و پیگیری در صورت نقص",
+    "hint": "documentation",
+    "extra": "مستندسازی برای پیگیری تعهدات الزامی است :contentReference[oaicite:28]{index=28}",
+    "page": 48
   },
   {
-    "id": "ch2_q12",
-    "type": "mcq",
-    "question": "کدام توصیف درباره جریان هوای آزمایشگاه BSL‑1 صحیح است؟",
-    "options": [
-      "فشار مثبت به راهرو دارد",
-      "فشار منفی به راهرو دارد",
-      "بدون کنترل فشار است",
-      "فشار مساوی با بیرون دارد"
-    ],
-    "answer": 3,
-    "hint": "BSL‑1 نیازی به کنترل فشار ندارد.",
-    "extra": "فشار مساوی یا جزئی مثبت دارد تا ورود ذرات کاهش یابد.",
-    "page": 10
-  },
-  {
-    "id": "ch2_q13",
+    "id": "ch9_q15",
     "type": "short",
-    "question": "در BSC Class II چه درصدی از هوا قبل از خروج از کابین فیلتر HEPA می‌شود؟",
-    "answer": "100%",
-    "hint": "تمام هوای خروجی HEPA فیلتر است.",
-    "extra": "این موجب تضمین عدم نشت آئروسل می‌شود.",
-    "page": 6
+    "question": "نقش national standards در biosecurity چیست؟",
+    "answer": "تعریف حداقل‌های امنیتی برای تمامی مؤسسات",
+    "hint": "ongoing responsibility",
+    "extra": "استانداردهای ملی حداقل‌های لازم را مشخص می‌کنند :contentReference[oaicite:29]{index=29}",
+    "page": 48
   }
 ]
