@@ -1,0 +1,15 @@
+[
+  { "id": "ch1",  "title": "فصل ۱ – General principles" },
+  { "id": "ch2",  "title": "فصل ۲ – Microbiological risk assessment" },
+  { "id": "ch3",  "title": "فصل ۳ – Basic laboratories – Biosafety Levels 1 and 2" },
+  { "id": "ch4",  "title": "فصل ۴ – The containment laboratory – Biosafety Level 3" },
+  { "id": "ch5",  "title": "فصل ۵ – Maximum containment laboratory – Biosafety Level 4" },
+  { "id": "ch6",  "title": "فصل ۶ – Animal facilities" },
+  { "id": "ch7",  "title": "فصل ۷ – Field and large‑scale sites" },
+  { "id": "ch8",  "title": "فصل ۸ – Containment principles for large‑scale facilities" },
+  { "id": "ch9",  "title": "فصل ۹ – Contingency plans and emergency procedures" },
+  { "id": "ch13", "title": "فصل ۱۳ – Contingency plans and emergency procedures" },
+  { "id": "ch14", "title": "فصل ۱۴ – Disinfection and sterilization" },
+  { "id": "ch16", "title": "فصل ۱۶ – Biosafety and recombinant DNA technology" },
+  { "id": "ch17", "title": "فصل ۱۷ – Hazardous chemicals" }
+]
