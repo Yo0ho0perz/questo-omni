@@ -13,7 +13,7 @@ export default defineNuxtConfig({
   ],
    runtimeConfig: {
     telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
-    telegramChatId: process.env.TELEGRAM_CHAT_ID,
+    telegramChatIds: process.env.TELEGRAM_CHAT_IDS?.split(',') || [],
       public: {
         appVersion: version,
         refreshInterval: 6 * 60 * 60 * 1_000, // 6 h
