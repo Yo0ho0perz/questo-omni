@@ -1,179 +1,66 @@
 [
   {
     "id": "ch9_q1",
-    "type": "mcq",
-    "question": "تفاوت اصلی بین مفاهیم «laboratory biosafety» و «laboratory biosecurity» چیست؟",
-    "options": [
-      "Biosafety جلوگری از انتشار تصادفی است، biosecurity جلوگری از سوءنیت",
-      "Biosafety شامل فیلتر هواست، biosecurity شامل فیلتر آب",
-      "biosafety هزینه بالاتری دارد",
-      "biosecurity فقط برای BSL-4 است"
-    ],
-    "answer": 0,
-    "hint": "intentional vs unintentional",
-    "extra": "biosafety پیشگیری از تماس تصادفی، biosecurity پیشگیری از سوءاستفاده عمدی :contentReference[oaicite:15]{index=15}",
-    "page": 47
+    "type": "short",
+    "question": "چگونه لاگ‌ها را برای شناسایی تهدید تحلیل می‌کنید؟",
+    "answer": "برای تحلیل لاگ، ابتدا منبع و فرمت آن را شناسایی می‌کنم (مثلاً Windows Event Logs، Syslog، یا Application Logs)، سپس با استفاده از SIEM یا ابزار جستجو، الگوهای غیرعادی، خطاهای تکراری یا رفتار مشکوک را بررسی می‌کنم. همبستگی رویدادها بین چند منبع می‌تواند الگوی حمله را آشکار کند، مثلاً ورود مشکوک از یک IP ناشناخته به همراه تلاش‌های متعدد برای دسترسی به فایل‌های حساس.",
+    "hint": "- همیشه منبع و timestamp را چک کن.\n- Correlation = قدرت اصلی تحلیل لاگ.\n- به Event IDها و پیام‌های تکراری دقت کن.",
+    "extra": "### ADHD نکته:\nتحلیل لاگ مثل کنار هم گذاشتن تکه‌های پازل است؛ یک لاگ به‌تنهایی ممکن است بی‌معنی باشد، ولی وقتی با بقیه ترکیب شود، تصویر کامل حمله را نشان می‌دهد."
   },
   {
     "id": "ch9_q2",
     "type": "short",
-    "question": "یکی از ارکان اصلی یک برنامه biosecurity چیست؟",
-    "answer": "inventory مداوم و بایگانی حمل‌ونقل مواد",
-    "hint": "updated inventory",
-    "extra": "حسابرسی و ثبت دقیق انتقال‌ها ضروری است :contentReference[oaicite:16]{index=16}",
-    "page": 48
+    "question": "اصول Forensics در SOC چیست؟",
+    "answer": "Forensics در SOC یعنی جمع‌آوری، نگهداری و تحلیل شواهد دیجیتال به شکلی که در دادگاه یا گزارش رسمی معتبر باشد. این شامل Chain of Custody، ابزارهای معتبر (مثل Volatility برای حافظه، Autopsy برای دیسک)، و مستندسازی دقیق است. هدف، بازسازی کامل حادثه بدون تغییر شواهد است.",
+    "hint": "- Forensics = حفظ شواهد + تحلیل علمی.\n- ابزارها: Volatility, FTK, Autopsy.\n- مستندسازی = کلید اعتبار.",
+    "extra": "### ADHD نکته:\nمثل کارآگاه جنایی باش که هر ردپا را جمع‌آوری و ثبت می‌کند بدون اینکه صحنه جرم را خراب کند."
   },
   {
     "id": "ch9_q3",
-    "type": "mcq",
-    "question": "چه کسی باید در تهیه برنامه biosecurity شرکت کند؟",
-    "options": [
-      "تنها مدیر آزمایشگاه",
-      "scientific directors تا security staff",
-      "فقط biosafety officer",
-      "فقط personnel IT"
-    ],
-    "answer": 1,
-    "hint": "broad input",
-    "extra": "از مدیران علمی تا نیروهای امنیتی باید مشارکت کنند :contentReference[oaicite:17]{index=17}",
-    "page": 48
+    "type": "short",
+    "question": "Packet Analysis پیشرفته چگونه انجام می‌شود؟",
+    "answer": "در Packet Analysis پیشرفته، علاوه بر بررسی هدرها و پورت‌ها، به الگوهای ارتباطی، طول بسته‌ها، و زمان‌بندی آن‌ها دقت می‌کنیم. تشخیص پروتکل‌های ناشناخته، Payloadهای مشکوک، و حتی ارتباطات رمزگذاری‌شده غیرعادی بخشی از این کار است. ابزارهایی مثل Wireshark، Zeek و tcpdump برای این تحلیل ضروری هستند.",
+    "hint": "- نگاه فقط به پورت کافی نیست.\n- ترافیک رمزگذاری‌شده مشکوک را علامت‌گذاری کن.\n- ابزار: Wireshark, Zeek.",
+    "extra": "### ADHD نکته:\nمثل گوش دادن به یک مکالمه ناشناخته است؛ حتی اگر زبان را نفهمی، از لحن و الگوها می‌توانی بفهمی که چیز مشکوکی در جریان است."
   },
   {
     "id": "ch9_q4",
     "type": "short",
-    "question": "چه مدراک مالی باید در biosecurity نگهداری شود؟",
-    "answer": "لیست به‌روز شده موجودی مواد و محل نگهداری",
-    "hint": "storage location",
-    "extra": "inventory دقیق مواد با محل نگهداری فراهم شود :contentReference[oaicite:18]{index=18}",
-    "page": 48
+    "question": "OSINT در SOC چه کاربردی دارد؟",
+    "answer": "OSINT (Open Source Intelligence) یعنی جمع‌آوری اطلاعات از منابع عمومی مثل وب، شبکه‌های اجتماعی، گزارش‌های امنیتی و حتی Dark Web. در SOC، OSINT برای شناسایی IOCهای جدید، تهدیدات فعال، و اطلاعات مرتبط با حملات هدفمند استفاده می‌شود.",
+    "hint": "- OSINT = شکار اطلاعات آزاد.\n- منبع: Shodan, VirusTotal, Threat Feeds.\n- خطر: اطلاعات کاذب.",
+    "extra": "### ADHD نکته:\nOSINT مثل جستجو در اینترنت برای پیدا کردن نشانه‌های دزد قبل از اینکه به خانه‌ات برسد."
   },
   {
     "id": "ch9_q5",
-    "type": "mcq",
-    "question": "در biosecurity باید چگونه با discrepancies در inventory برخورد کرد؟",
-    "options": [
-      "نادیده گرفتن",
-      "گزارش و تحقیق و اصلاح",
-      "حذف محل ذخیره",
-      "افزایش موجودی"
-    ],
-    "answer": 1,
-    "hint": "investigate",
-    "extra": "باید گزارش، تحقیق و رفع نقص شود :contentReference[oaicite:19]{index=19}",
-    "page": 48
+    "type": "short",
+    "question": "Malware Analysis مقدماتی شامل چه مراحلی است؟",
+    "answer": "Malware Analysis مقدماتی شامل دو بخش است: **Static Analysis** (بررسی فایل بدون اجرای آن، مثل چک کردن هش، strings، و ساختار PE) و **Dynamic Analysis** (اجرای فایل در محیط ایزوله و بررسی رفتار آن). هدف شناسایی عملکرد، ارتباطات شبکه‌ای، و Indicators است.",
+    "hint": "- Static = بدون اجرا.\n- Dynamic = با اجرا در Sandbox.\n- ابزار: Cuckoo, PEiD, strings.",
+    "extra": "### ADHD نکته:\nStatic Analysis مثل نگاه کردن به نقشه ساختمان است؛ Dynamic Analysis مثل گشت زدن داخل ساختمان."
   },
   {
     "id": "ch9_q6",
     "type": "short",
-    "question": "training مخصوص biosecurity چه تفاوتی با biosafety دارد؟",
-    "answer": "تمرکز بر روی امنیت و جلوگیری از سرقت/سوءاستفاده",
-    "hint": "security roles",
-    "extra": "شامل آموزش نقش‌ها و رویه‌های امنیتی است :contentReference[oaicite:20]{index=20}",
-    "page": 48
+    "question": "Threat Hunting چیست و چگونه انجام می‌شود؟",
+    "answer": "Threat Hunting یعنی جستجوی فعالانه برای تهدیدات بدون انتظار برای هشدار. این کار معمولاً با فرضیه‌سازی (Hypothesis) شروع می‌شود، سپس با استفاده از داده‌های SIEM، EDR، و Threat Intelligence به دنبال شواهد جستجو می‌کنیم. هدف یافتن تهدیدات مخفی یا جدید است.",
+    "hint": "- Threat Hunting = شکار فعال.\n- Hypothesis + جستجوی داده.\n- ابزار: SIEM, EDR, TI Feeds.",
+    "extra": "### ADHD نکته:\nمثل این است که قبل از دیدن دزد، علائم حضورش (ردپا، پنجره باز) را پیدا کنی."
   },
   {
     "id": "ch9_q7",
-    "type": "mcq",
-    "question": "کدام مورد از ارکان biosecurity نیست؟",
-    "options": [
-      "inventory control",
-      "risk assessment",
-      "product labeling",
-      "incident response protocol"
-    ],
-    "answer": 2,
-    "hint": "materials focus",
-    "extra": "برچسب‌گذاری محصولات بخشی از biosafety است، نه biosecurity :contentReference[oaicite:21]{index=21}",
-    "page": 47
+    "type": "short",
+    "question": "Automation & Scripting چه کمکی به SOC می‌کند؟",
+    "answer": "Automation & Scripting در SOC باعث کاهش زمان پاسخ، حذف کارهای تکراری، و دقت بیشتر می‌شود. با Python یا PowerShell می‌توان لاگ‌ها را تحلیل، IOCها را جستجو، یا حتی پاسخ به حادثه را خودکار کرد.",
+    "hint": "- Automation = سرعت + دقت.\n- ابزار: Python, PowerShell, Bash.\n- هدف: حذف کار تکراری.",
+    "extra": "### ADHD نکته:\nمثل ساختن یک ربات خانگی است که کارهای وقت‌گیر را خودش انجام می‌دهد."
   },
   {
     "id": "ch9_q8",
     "type": "short",
-    "question": "نقش ارزیابی تهدید (threat assessment) در biosecurity چیست؟",
-    "answer": "شناسایی مواد جذاب برای سوءاستفاده‌کنندگان",
-    "hint": "attractive materials",
-    "extra": "کمک می‌کند تا مواد حساس شناسایی شوند :contentReference[oaicite:22]{index=22}",
-    "page": 48
-  },
-  {
-    "id": "ch9_q9",
-    "type": "mcq",
-    "question": "چه عاملی نباید باعث اختلال در فعالیت‌های روزمره research شود؟",
-    "options": [
-      "بوروکراسی امنیتی غیرضروری",
-      "غفلت از فیلتر HEPA",
-      "آموزش ناکافی",
-      "inventory دقیق"
-    ],
-    "answer": 0,
-    "hint": "not impede research",
-    "extra": "security نباید کاری research را مختل کند :contentReference[oaicite:23]{index=23}",
-    "page": 48
-  },
-  {
-    "id": "ch9_q10",
-    "type": "short",
-    "question": "در biosecurity باید چه نقشی برای law enforcement تعیین شود؟",
-    "answer": "تعریف نقطه تماس و مسئولیت‌ها هنگام نقص امنیتی",
-    "hint": "clear roles",
-    "extra": "نقش‌ها باید در صورت رویداد امنیتی مشخص باشند :contentReference[oaicite:24]{index=24}",
-    "page": 48
-  },
-  {
-    "id": "ch9_q11",
-    "type": "mcq",
-    "question": "برای کدامیک از موارد زیر برنامه biosecurity ضروری‌تر است؟",
-    "options": [
-      "Risk Group 1 cultures",
-      "Risk Group 2 diagnostic samples",
-      "Risk Group 3 agent stocks",
-      "تمام موارد"
-    ],
-    "answer": 3,
-    "hint": "all levels",
-    "extra": "تمام سطوح باید biosecurity مناسب داشته باشند :contentReference[oaicite:25]{index=25}",
-    "page": 48
-  },
-  {
-    "id": "ch9_q12",
-    "type": "short",
-    "question": "چه جنبه‌ای از اطلاعات در biosecurity باید محافظت شود؟",
-    "answer": "دسترسی به داده‌های حساس و محل نگهداری مواد",
-    "hint": "personnel access",
-    "extra": "اطلاعات دسترسی و موقعیت مواد باید محرمانه باشد :contentReference[oaicite:26]{index=26}",
-    "page": 48
-  },
-  {
-    "id": "ch9_q13",
-    "type": "mcq",
-    "question": "کدام فعالیت مربوط به biosecurity نیست؟",
-    "options": [
-      "اصرار بر لباس شخصی در آزمایشگاه",
-      "حسابرسی موجودی",
-      "آموزش امنیتی",
-      "برنامه پاسخ به حادثه"
-    ],
-    "answer": 0,
-    "hint": "lab clothing",
-    "extra": "لباس شخصی ربطی به biosecurity ندارد :contentReference[oaicite:27]{index=27}",
-    "page": 47
-  },
-  {
-    "id": "ch9_q14",
-    "type": "short",
-    "question": "چرا مسئولیت‌ها در biosecurity باید مستند شوند؟",
-    "answer": "برای شفافیت و پیگیری در صورت نقص",
-    "hint": "documentation",
-    "extra": "مستندسازی برای پیگیری تعهدات الزامی است :contentReference[oaicite:28]{index=28}",
-    "page": 48
-  },
-  {
-    "id": "ch9_q15",
-    "type": "short",
-    "question": "نقش national standards در biosecurity چیست؟",
-    "answer": "تعریف حداقل‌های امنیتی برای تمامی مؤسسات",
-    "hint": "ongoing responsibility",
-    "extra": "استانداردهای ملی حداقل‌های لازم را مشخص می‌کنند :contentReference[oaicite:29]{index=29}",
-    "page": 48
+    "question": "چرا شناخت TTPهای Red Team برای Blue Team مهم است؟",
+    "answer": "شناخت تاکتیک‌ها، تکنیک‌ها و رویه‌های Red Team به Blue Team کمک می‌کند تا دفاع بهتری طراحی کند، نقاط ضعف خود را بشناسد، و حملات واقعی را بهتر شناسایی کند.",
+    "hint": "- Red Team = مهاجم شبیه‌سازی‌شده.\n- Blue Team = مدافع.\n- شناخت دشمن = دفاع بهتر.",
+    "extra": "### ADHD نکته:\nمثل بازی شطرنج است؛ اگر حرکات حریف را بشناسی، می‌توانی بهتر دفاع کنی."
   }
 ]
