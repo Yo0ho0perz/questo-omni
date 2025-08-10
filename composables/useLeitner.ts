@@ -6,11 +6,14 @@ export interface QuestionState {
   box: number
   next: number
   highlight?: boolean
+  revealed?: boolean
+  revealedAt?: number
+  lastText?: string         // برای short-answer
   log: { t: number; ok: boolean }[]
   lastChosen?: number
 }
 
-const BOX_INTERVAL = [0, 1, 3, 7, 14, 30] // in days
+const BOX_INTERVAL = [0, 1, 3, 7, 14, 30] // days
 
 export function useLeitner(chapter: string) {
   const state = useStorage<Record<string, QuestionState>>(
@@ -19,51 +22,60 @@ export function useLeitner(chapter: string) {
   )
 
   async function logToTelegram(text: string) {
-    await $fetch('/api/log-action', {
-      method: 'POST',
-      body: { msg: text }
-    })
+    await $fetch('/api/log-action', { method: 'POST', body: { msg: text } })
   }
 
-  // 1) record now logs the actual choice or “short:<text>”
+  function ensure(id: string) {
+    if (!state.value[id]) {
+      const now = Date.now()
+      state.value[id] = { box: 0, next: now, log: [], revealed: false }
+    }
+    return state.value[id]
+  }
+
+  // پاسخ ثبت‌شده (MCQ/Short)، و حتماً revealed هم می‌شود
   async function record(id: string, ok: boolean, chosenIdx?: number, shortText?: string) {
     const now = Date.now()
-    const existing = state.value[id] ?? { box: 0, next: now, log: [] }
+    const existing = ensure(id)
     const box = Math.min(Math.max(ok ? existing.box + 1 : 0, 0), BOX_INTERVAL.length - 1)
     const next = now + BOX_INTERVAL[box] * 86_400_000
     const log = [...existing.log, { t: now, ok }]
     state.value = {
       ...state.value,
       [id]: {
+        ...existing,
         box,
         next,
-        highlight: existing.highlight,
         log,
-        lastChosen: chosenIdx
+        lastChosen: chosenIdx,
+        lastText: shortText ?? existing.lastText,
+        revealed: true,
+        revealedAt: now
       }
     }
-    const choiceDesc = chosenIdx != null
-      ? `choice=${String.fromCharCode(65 + chosenIdx)}`
-      : shortText != null
-        ? `short="${shortText}"`
-        : ''
-    // await logToTelegram(`📝 Q:#${id} – ${ok ? '✅' : '❌'} ${choiceDesc}`)
+    // await logToTelegram(`📝 Q:#${id} – ${ok ? '✅' : '❌'}`)
   }
 
-  // 2) new reveal logger
-  async function logReveal(id: string) {
+  // فقط «دیدن پاسخ» را کش کن
+  async function markRevealed(id: string) {
     const now = Date.now()
+    const existing = ensure(id)
+    state.value = {
+      ...state.value,
+      [id]: { ...existing, revealed: true, revealedAt: now }
+    }
     // await logToTelegram(`👁️ Q:${id} – show answer`)
   }
 
   async function toggleHighlight(id: string) {
-    const existing = state.value[id]
-    if (!existing) return
+    const existing = ensure(id)
+    const newVal = !existing.highlight
     state.value = {
       ...state.value,
-      [id]: { ...existing, highlight: !existing.highlight }
+      [id]: { ...existing, highlight: newVal }
     }
-    !existing.highlight ? await logToTelegram(`⭐ #${id} ^_^`) : await logToTelegram(`😐 #${id} 🙆`)
+    // اختیاری: لاگ
+    // await logToTelegram(newVal ? `⭐ #${id}` : `😐 #${id}`)
   }
 
   async function reset(id: string) {
@@ -78,5 +90,5 @@ export function useLeitner(chapter: string) {
       .map(([id]) => id)
   )
 
-  return { state, record, logReveal, toggleHighlight, reset, dueIds }
+  return { state, record, markRevealed, toggleHighlight, reset, dueIds }
 }
