@@ -1,0 +1,57 @@
+[
+  {
+    "id": "ch11_q1",
+    "type": "short",
+    "question": "DLL Side Loading چیست و چرا موثر است؟",
+    "answer": "DLL Side Loading تکنیکی است که در آن مهاجم یک DLL مخرب با نام مشابه DLL قانونی را در مسیر قابل دسترسی برنامه قرار می‌دهد تا هنگام بارگذاری، برنامه آن DLL را به جای نسخه اصلی اجرا کند. این روش از مکانیزم DLL search order در ویندوز سوءاستفاده می‌کند. در SOC Tier 3، این به معنای مانیتورینگ بارگذاری DLL از مسیرهای غیرمعمول است. در یک حمله واقعی، یک بدافزار APT از DLL Side Loading برای اجرای کد مخرب در باینری امضاشده مایکروسافت استفاده کرد تا EDR را دور بزند.",
+    "hint": "- **حتماً به خاطر بسپار**: Search order vulnerability.\n- مسیرهای user-writable = خطر.\n- EDR همیشه dynamic load را flag نمی‌کند.",
+    "extra": "### سناریو Tier 3:\n- EDR نشان داد dllhost.exe یک DLL از مسیر temp کاربر لود کرده.\n- تجزیه نشان داد DLL شامل loader برای Cobalt Strike است.\n\n### راهکار:\n- AppLocker و monitoring مسیرهای temp برای DLL load.\n- استفاده از Sysmon Event ID 7.",
+    "page": 11,
+    "Rel": "DLL-side-loading,EDR-evasion,search-order",
+    "meta": {}
+  },
+  {
+    "id": "ch11_q2",
+    "type": "short",
+    "question": "Parent PID Spoofing چیست؟",
+    "answer": "Parent PID Spoofing زمانی است که مهاجم هنگام ایجاد یک process جدید، شناسه والد را جعل می‌کند تا به نظر برسد که process از یک والد مشروع اجرا شده. این کار برای گمراه کردن تحلیلگر یا bypass ruleهای EDR استفاده می‌شود. در یک مورد واقعی، cmd.exe به عنوان فرزند explorer.exe ظاهر شد ولی در واقع از malware loader اجرا شده بود.",
+    "hint": "- **حتماً به خاطر بسپار**: Parent-child chain بررسی شود.\n- Sysmon Event ID 1 و field ParentProcessID حیاتی است.",
+    "extra": "### تشخیص:\n- Correlate ParentProcessID با GUID.\n- مقایسه زمان ایجاد والد و فرزند.",
+    "page": 11,
+    "Rel": "parent-pid-spoofing,process-evasion",
+    "meta": {}
+  },
+  {
+    "id": "ch11_q3",
+    "type": "short",
+    "question": "چگونه AMSI Bypass در بدافزارها پیاده‌سازی می‌شود؟",
+    "answer": "مهاجم می‌تواند تابع AmsiScanBuffer را در AMSI.dll patch کند تا همیشه نتیجه clean برگردد یا AMSI.dll را از حافظه حذف کند. این bypass معمولاً با PowerShell یا C# انجام می‌شود. Tier 3 از حافظه dump یا ETW eventها برای شناسایی این تغییر استفاده می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: AMSI bypass ≠ حذف AV.\n- Patch در حافظه = red flag.\n- بررسی load sequence DLLها.",
+    "extra": "### سناریو:\n- PowerShell با پارامتر -nop -w hidden اجرا شد.\n- حافظه AMSI.dll با ابزار داخلی patch شد.\n- اقدام: kill process و بررسی persistence.",
+    "page": 11,
+    "Rel": "AMSI,bypass,powershell",
+    "meta": {}
+  },
+  {
+    "id": "ch11_q4",
+    "type": "short",
+    "question": "حملات PowerShell Profile چیست؟",
+    "answer": "مهاجم می‌تواند در فایل profile.ps1 کاربر یا سیستم، کد مخرب اضافه کند تا هر بار که PowerShell اجرا می‌شود، آن کد اجرا شود. این یک روش persistence است که اغلب نادیده گرفته می‌شود. در یک حمله واقعی، کد exfiltration credentials در profile کاربر قرار گرفته بود.",
+    "hint": "- **حتماً به خاطر بسپار**: مسیر `%UserProfile%\\Documents\\WindowsPowerShell\\profile.ps1`.\n- تغییر کوچک در profile = هشدار.",
+    "extra": "### Hunting:\n- فایل profile.ps1 را مانیتور کنید.\n- hash baseline نگه دارید.",
+    "page": 11,
+    "Rel": "powershell,profile,persistence",
+    "meta": {}
+  },
+  {
+    "id": "ch11_q5",
+    "type": "short",
+    "question": "یک سناریوی کامل Detection Evasion شرح دهید.",
+    "answer": "در یک رخداد، مهاجم DLL side loading را با parent PID spoofing ترکیب کرد. DLL مخرب از مسیر AppData بارگذاری شد، و process جدید با والد جعلی explorer.exe ساخته شد تا عادی به نظر برسد. AMSI هم در حافظه patch شده بود تا هیچ اسکریپت شناسایی نشود. این ترکیب سه‌گانه detection را به شدت سخت کرد تا زمانی که Tier 3 از memory forensics استفاده کرد.",
+    "hint": "- **حتماً به خاطر بسپار**: ترکیب تکنیک‌ها = evasion قوی‌تر.\n- همواره رفتار کلی را بررسی کن، نه فقط یک IOC.",
+    "extra": "### درس‌آموخته:\n- Correlation چند لایه ضروری است.\n- EDR تنها ≠ کافی.",
+    "page": 11,
+    "Rel": "evasion,DLL-side-loading,parent-pid-spoofing,AMSI-bypass",
+    "meta": {}
+  }
+]

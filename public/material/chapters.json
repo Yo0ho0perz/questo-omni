@@ -1,11 +1,268 @@
 [
-  { "id": "ch1", "title": "SIEM و مانیتورینگ" },
-  { "id": "ch2", "title": "Incident Response" },
-  { "id": "ch3", "title": "تحلیل شبکه و پروتکل‌ها" },
-  { "id": "ch4", "title": "تهدیدات و تهدیدشناسی (Threat Intelligence)" },
-  { "id": "ch5", "title": "ایمیل و امنیت آن" },
-  { "id": "ch6", "title": "ابزارها و تکنیک‌های شناسایی تهدید" },
-  { "id": "ch7", "title": "مفاهیم رمزنگاری و هش" },
-  { "id": "ch8", "title": "چارچوب‌ها و استانداردها" },
-  { "id": "ch9", "title": "سایر موارد مهم" }
+  {
+    "id": "ch1",
+    "title": "SIEM و Splunk پیشرفته",
+    "desc": "تحلیل عمیق داده‌ها در Splunk، بهینه‌سازی جستجو، مدیریت notable، correlation پیشرفته.",
+    "coverage_items": [
+      "Stats, tstats, eventstats تفاوت‌ها",
+      "transaction command",
+      "sequence event",
+      "Grouping commands",
+      "suppression",
+      "throttle",
+      "sourceType",
+      "summaries_only",
+      "from vs tstats",
+      "eval, len()",
+      "workflow action",
+      "کاربرد notable ها در ES",
+      "تشریح کاربرد splunk appها",
+      "performance tuning",
+      "CIM mapping"
+    ]
+  },
+  {
+    "id": "ch2",
+    "title": "Incident Response و Triage عملی",
+    "desc": "چرخه کامل IR، از شناسایی تا بازیابی، بهینه‌سازی تصمیم‌گیری و مدیریت چند حادثه.",
+    "coverage_items": [
+      "Identification",
+      "Containment کوتاه‌مدت و بلندمدت",
+      "Triage با Impact/Scope matrix",
+      "Eradication",
+      "Recovery",
+      "Lesson Learned",
+      "Chain of Custody",
+      "Escalation",
+      "Multiple incident management",
+      "IOC vs IOA",
+      "Communication با stakeholders",
+      "Resource prioritization",
+      "Forensic evidence gathering Windows/Linux",
+      "Proactive vs Reactive اقدامات"
+    ]
+  },
+  {
+    "id": "ch3",
+    "title": "پروتکل‌های شبکه و تحلیل ترافیک",
+    "desc": "TCP/UDP/ICMP، handshake، anomalous patterns، حملات amplification، ابزارهای تحلیل.",
+    "coverage_items": [
+      "TCP 3-way handshake",
+      "TCP half-open connections",
+      "UDP spoofing",
+      "ICMP anomaly detection",
+      "Amplification attacks (DNS, NTP, SSDP, memcached)",
+      "Traceroute mechanism",
+      "Packet forensics (header, payload)",
+      "Baseline traffic analysis",
+      "Zeek DPD",
+      "DNS amplification detection در PCAP"
+    ]
+  },
+  {
+    "id": "ch4",
+    "title": "حملات وب و شناسایی آن‌ها",
+    "desc": "شناسایی و پاسخ به XSS، CSRF، SQLi، Log4j، CORS misconfig و Fast Flux.",
+    "coverage_items": [
+      "HTTP status code anomalies (3xx, 4xx, 5xx)",
+      "XSS (stored, reflected, DOM-based)",
+      "CSRF",
+      "SQL Injection (error, union, blind)",
+      "Blind SQLi (boolean, time, OOB)",
+      "SOP",
+      "CORS policy",
+      "Log4j CVE-2021-44228",
+      "Fast Flux DNS",
+      "TTL manipulation in DNS"
+    ]
+  },
+  {
+    "id": "ch5",
+    "title": "حملات پیشرفته Active Directory",
+    "desc": "تکنیک‌های پیشرفته AD attack و persistence، شناسایی و پاسخ.",
+    "coverage_items": [
+      "DCSync",
+      "Kerberoasting",
+      "Pass-the-Hash",
+      "Over-Pass-the-Hash",
+      "AdminSDHolder abuse",
+      "Special privileges abuse (SEDebug, SeImpersonate)",
+      "UAC bypass",
+      "Lateral movement (SMB, WMI, RDP)"
+    ]
+  },
+  {
+    "id": "ch6",
+    "title": "رمزنگاری و PKI",
+    "desc": "مفاهیم TLS/SSL، PKI، hashing و salting، امنیت ایمیل و تحلیل ترافیک رمزگذاری‌شده.",
+    "coverage_items": [
+      "HTTPS encryption process",
+      "PKI concepts",
+      "Hashing algorithms",
+      "Salting",
+      "SPF",
+      "DKIM",
+      "DMARC",
+      "ssl.log در Zeek",
+      "dpd.log در Zeek",
+      "Key management (expiry, revocation)"
+    ]
+  },
+  {
+    "id": "ch7",
+    "title": "امنیت ایمیل و Secure Messaging",
+    "desc": "پروتکل‌ها و رکوردهای امنیتی ایمیل، تحلیل حملات فیشینگ و spoofing.",
+    "coverage_items": [
+      "SPF",
+      "DKIM",
+      "DMARC",
+      "Phishing detection",
+      "Email header forensics",
+      "Spoofing prevention",
+      "BEC attack analysis",
+      "Attachment malware detection"
+    ]
+  },
+  {
+    "id": "ch8",
+    "title": "Windows Security و Threat Hunting",
+    "desc": "تحلیل لاگ ویندوز، شناسایی حملات memory dump و persistence، UAC bypass.",
+    "coverage_items": [
+      "Sysmon Event ID 1 vs 4688",
+      "Process ID vs GUID",
+      "LSASS dump detection",
+      "AMSI detection",
+      "AMSI bypass",
+      "Persistence registry paths",
+      "UAC bypass detection"
+    ]
+  },
+  {
+    "id": "ch9",
+    "title": "Linux Security و Forensics",
+    "desc": "مفاهیم inode، hard/soft link، لاگ‌های مهم و تحلیل رفتار shell.",
+    "coverage_items": [
+      "inode",
+      "Hardlink vs Softlink",
+      "/etc/passwd",
+      "/etc/shadow",
+      "bash history forensics",
+      "auditd",
+      "Common Linux commands",
+      "Viper commands in Linux"
+    ]
+  },
+  {
+    "id": "ch10",
+    "title": "Threat Intelligence و MITRE ATT&CK",
+    "desc": "IOC vs IOA، mapping به MITRE، OSINT و enrichment logs.",
+    "coverage_items": [
+      "IOC vs IOA",
+      "MITRE ATT&CK mapping",
+      "OSINT tools",
+      "Enrichment in Windows logs",
+      "Lateral movement detection"
+    ]
+  },
+  {
+    "id": "ch11",
+    "title": "Malware Analysis و Evasion",
+    "desc": "تحلیل تکنیک‌های مخفی‌کاری بدافزار، شناسایی و مهار.",
+    "coverage_items": [
+      "DLL side loading",
+      "Parent PID spoofing",
+      "AMSI bypass",
+      "PowerShell profile attacks",
+      "Detection scenarios"
+    ]
+  },
+  {
+    "id": "ch12",
+    "title": "Automation و Scripting در SOC",
+    "desc": "SPL پیشرفته، ساخت automation workflows، ادغام SIEM با ابزارهای NTA و EDR.",
+    "coverage_items": [
+      "Advanced SPL",
+      "eval function",
+      "len() function",
+      "sequence events",
+      "Workflow automation",
+      "Integration with EDR/NTA",
+      "Custom hunting dashboards"
+    ]
+  },
+  {
+    "id": "ch13",
+    "title": "Final SOC Tier 3 Wrap-Up & Reinforcement",
+    "desc": "مرور نهایی، تکمیل پوشش همه مفاهیم SOC Tier 3، تقویت سناریوهای عملی و پر کردن شکاف‌های باقیمانده.",
+    "coverage_items": [
+      "Status code anomalies (400, 3xx, 5xx)",
+      "Slow Loris attack",
+      "SOP و CORS policy",
+      "CSRF vs XSS detection",
+      "ssl.log, conn.log, dpd.log در Zeek",
+      "UTBOX",
+      "ICMP anomaly detection",
+      "Amplification attacks و mitigation",
+      "DCSync deep dive",
+      "Stats, tstats, eventstats, from",
+      "transaction command advanced",
+      "Workflow action in Splunk",
+      "AMSI detection & bypass",
+      "SPF, DKIM, DMARC full",
+      "AdminSDHolder attack",
+      "Log4j detection",
+      "Blind SQLi advanced types",
+      "SSPI",
+      "PGP",
+      "Enrichment in Windows logs",
+      "BPDU Guard",
+      "Port Trunk",
+      "Etherchannel",
+      "HSRP vs VRRP",
+      "inode deep",
+      "HardLink vs SoftLink",
+      "CIS vs ASD",
+      "HTTPS encryption",
+      "PPID Spoofing",
+      "DLL side loading detection",
+      "SOA record in DNS",
+      "Fast flux DNS",
+      "Throttling & suppression",
+      "PowerShell profile detection",
+      "Traceroute mechanism",
+      "Persistence registry paths",
+      "Process ID vs GUID",
+      "Kerberoasting",
+      "UAC bypass",
+      "PKI deep dive",
+      "stattls",
+      "Data exfiltration detection",
+      "eval & len() advanced usage",
+      "TCP open vs half-open",
+      "sourceType in Splunk",
+      "IOC vs IOA",
+      "TTL-based DNS attack",
+      "Sysmon Event ID 1 vs 4688",
+      "LSASS dump detection",
+      "Pass-the-Hash & Over-Pass-the-Hash",
+      "Special privileges (SEDebug, SeImpersonate)",
+      "etc/passwd vs etc/shadow",
+      "Salting process",
+      "Bash file forensics",
+      "MITRE ATT&CK Navigator",
+      "Lateral movement",
+      "PowerShell -nop",
+      "HTTP vs HTTPS",
+      "NTA tools",
+      "Anomaly detection in TCP/DNS",
+      "Security descriptor, DACL, SACL",
+      "Routing algorithms",
+      "Telnet vs SSH",
+      "Group policy & SOP",
+      "Fortigate log analysis",
+      "Firepower log analysis",
+      "auditd in Linux",
+      "Mimikatz usage"
+    ]
+  }
 ]

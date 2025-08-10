@@ -2,81 +2,116 @@
   {
     "id": "ch2_q1",
     "type": "short",
-    "question": "مراحل اصلی Incident Response طبق NIST چیست؟",
-    "answer": "- **Preparation (آمادگی)**\n- **Identification (شناسایی حادثه)**\n- **Containment (مهار)**\n- **Eradication (حذف تهدید)**\n- **Recovery (بازیابی)**\n- **Lessons Learned (درس‌آموخته‌ها)**",
-    "hint": "- به شکل **PI C E R L** حفظ کن.\n- مثل یک تیم آتش‌نشانی: آماده → کشف → مهار → خاموش کردن → بازسازی → گزارش.",
-    "extra": "### توضیح کامل:\n1. **Preparation:**\n   - مستندسازی Playbook، آموزش تیم، آماده بودن ابزارها.\n   - مثال: آماده بودن کیت Forensic.\n2. **Identification:**\n   - تشخیص اینکه آیا رویداد واقعاً Incident است.\n   - استفاده از SIEM، EDR، و بررسی لاگ.\n3. **Containment:**\n   - جلوگیری از گسترش حمله.\n   - مثال: ایزوله کردن سیستم آلوده.\n4. **Eradication:**\n   - حذف کامل بدافزار یا مهاجم.\n   - پاک کردن فایل‌های مخرب، تغییر پسوردها.\n5. **Recovery:**\n   - بازگرداندن سیستم به حالت عادی.\n   - تست سرویس‌ها.\n6. **Lessons Learned:**\n   - نوشتن گزارش و بهبود دفاع.\n- **ADHD نکته:** این مراحل رو مثل مسیر «نجات یک ساختمان در آتش» تصور کن."
+    "question": "در Incident Response، مرحله Identification چیست و چه مهارت‌هایی در Tier 3 لازم دارد؟",
+    "answer": "Identification اولین مرحله رسمی IR است که در آن وقوع یک رویداد امنیتی تایید یا رد می‌شود. در Tier 3، این به معنای توانایی تشخیص تفاوت بین نویز، false positive و رویداد واقعی است. این کار با ترکیب داده از SIEM، EDR، NDR و threat intel انجام می‌شود. یک Tier 3 باتجربه همیشه از چندین منبع برای cross-validation استفاده می‌کند: مثلا وقتی SIEM هشدار brute force می‌دهد، باید آن را با لاگ‌های سیستم مقصد و netflow ترافیک تطبیق دهد. این مرحله نیاز به شناخت baseline رفتار شبکه و کاربران دارد تا هر انحراف کوچک به سرعت دیده شود.",
+    "hint": "- **حتماً به خاطر بسپار**: confirmation > detection.\n- از چندین منبع داده استفاده کن.\n- baseline رفتار را بشناس.\n- IOC را اعتبارسنجی کن.\n- ابزار: Splunk, Zeek, EDR.",
+    "extra": "### سناریو واقعی:\n- SIEM alert → 'Multiple Failed Logins from single IP'.\n- Tier 3 اقدام: بررسی تعداد تلاش‌ها، فاصله زمانی بین آنها، تطبیق با لیست IP مجاز، مقایسه با threat intel.\n- نتیجه: تایید حمله brute force از IP ناشناخته.\n\n### نکات Tier 3:\n- همیشه بررسی کنید که IOC در محیط شما پیش از این مشاهده شده یا نه.\n- تهدیدات بدون IOC واضح ممکن است از طریق anomaly detection شناسایی شوند (مثلاً ترافیک به کشور غیرمعمول).",
+    "page": 2,
+    "Rel": "IR,identification,IOC,SIEM,EDR",
+    "meta": {
+      "IOC": "Indicator of Compromise: نشانه فنی از نفوذ یا فعالیت مخرب."
+    }
   },
   {
     "id": "ch2_q2",
     "type": "short",
-    "question": "چطور یک Incident را Escalate می‌کنید؟",
-    "answer": "- وقتی حادثه از توان و محدوده مسئولیت شما خارج است.\n- وقتی به داده‌های حساس، قوانین، یا زیرساخت حیاتی مربوط می‌شود.",
-    "hint": "- **Escalate** = زدن آژیر برای تیم بالادست.",
-    "extra": "### جزئیات:\n- معیارهای Escalation:\n  - تهدید فعال روی سیستم‌های حیاتی.\n  - تاثیر گسترده روی کاربران.\n  - نیاز به تصمیم مدیریتی یا قانونی.\n- **ADHD نکته:** Escalation مثل تماس با آتش‌نشانی وقتی آتش بزرگ‌تر از توانت شد."
+    "question": "Containment در IR چیست و چه تفاوتی بین کوتاه‌مدت و بلندمدت دارد؟",
+    "answer": "Containment اقداماتی است که گسترش حمله را متوقف می‌کند. Containment کوتاه‌مدت شامل کارهایی است که سریع انجام می‌شوند، مثل بلاک کردن IP در فایروال یا ایزوله کردن endpoint از شبکه. Containment بلندمدت شامل تغییرات پایدارتر است، مثل segment کردن شبکه یا بازتنظیم سیاست‌های دسترسی. در Tier 3، انتخاب روش containment به تعادل بین کاهش ریسک و حفظ سرویس بستگی دارد. قطع ناگهانی یک سرور حیاتی بدون هماهنگی می‌تواند خسارت عملیاتی ایجاد کند.",
+    "hint": "- **حتماً به خاطر بسپار**: کوتاه‌مدت = سریع و موقت.\n- بلندمدت = پایدار و ساختاری.\n- همیشه با تیم عملیات هماهنگ کن.",
+    "extra": "### سناریو عملی:\n- کشف ترافیک مشکوک از یک سرور ایمیل.\n- کوتاه‌مدت: قطع ارتباط اینترنتی سرور.\n- بلندمدت: تغییر پیکربندی relay و اضافه کردن SPF/DKIM/DMARC.\n\n### نکته حرفه‌ای:\n- هر containment باید مستندسازی شود.\n- قبل از اجرای containment، تاثیر روی سرویس‌ها و SLA بررسی شود.",
+    "page": 2,
+    "Rel": "IR,containment,firewall,segmentation,SLA",
+    "meta": {}
   },
   {
     "id": "ch2_q3",
     "type": "short",
-    "question": "Playbook چیست؟",
-    "answer": "مستندی که مراحل پاسخ به سناریوهای خاص را مرحله‌به‌مرحله شرح می‌دهد.",
-    "hint": "- **Playbook** = کتابچه تاکتیک‌ها.",
-    "extra": "### مثال:\n- Playbook برای حمله Phishing:\n  1. ایزوله کردن ایمیل.\n  2. اطلاع‌رسانی به کاربر.\n  3. بررسی هدر.\n  4. مسدود کردن URL مخرب.\n- **ADHD نکته:** Playbook مثل دستور آشپزی است؛ دقیق و قابل تکرار."
+    "question": "چگونه یک Tier 3 Triage را انجام می‌دهد تا Incidentها را اولویت‌بندی کند؟",
+    "answer": "Triage در IR به معنای بررسی سریع شدت (Impact) و گستره (Scope) هر Incident است تا تصمیم گرفته شود کدام یک باید اول رسیدگی شود. در Tier 3، این کار با استفاده از ماتریس Impact/Scope انجام می‌شود. Impact بالا یعنی تهدید به دارایی حیاتی یا داده حساس؛ Scope بالا یعنی تعداد زیادی سیستم یا کاربر درگیر شده‌اند. ترکیب این دو، اولویت را تعیین می‌کند. Tier 3 باید بتواند این تصمیم را سریع و با اطلاعات ناقص بگیرد، ولی همزمان قابلیت بازبینی و اصلاح تصمیم را داشته باشد.",
+    "hint": "- **حتماً به خاطر بسپار**: Impact + Scope = Priority.\n- داده ناقص ≠ توقف تصمیم‌گیری.\n- ابزار: Incident Queue, SLA metrics.",
+    "extra": "### مثال:\n- Incident 1: یک workstation آلوده به malware.\n- Incident 2: حمله brute force روی سرویس VPN سازمان.\n- Impact/Scope نشان می‌دهد که VPN اولویت بالاتری دارد چون تهدید به دارایی بحرانی و کاربران بیشتر است.\n\n### نکات Tier 3:\n- تصمیم‌گیری سریع، سپس بازبینی با داده کامل‌تر.\n- ثبت دلیل انتخاب اولویت برای مستندسازی و درس‌آموزی.",
+    "page": 2,
+    "Rel": "IR,triage,impact,scope,priority",
+    "meta": {}
   },
   {
     "id": "ch2_q4",
     "type": "short",
-    "question": "Indicators of Compromise (IOC) در Incident Response چه نقشی دارند؟",
-    "answer": "IOCها شواهدی هستند که نشان می‌دهند یک سیستم ممکن است compromise شده باشد.",
-    "hint": "- **IOC** = سرنخ جرم دیجیتال.",
-    "extra": "مثال: آدرس IP مشکوک، دامنه C2، هش فایل بدافزار، رشته خاص در لاگ."
+    "question": "Chain of Custody چیست و چگونه در Tier 3 رعایت می‌شود؟",
+    "answer": "Chain of Custody فرآیند مستندسازی و کنترل شواهد دیجیتال است تا اطمینان حاصل شود که از زمان جمع‌آوری تا ارائه در دادگاه یا گزارش، شواهد دستکاری نشده‌اند. در Tier 3، این یعنی ثبت اینکه چه کسی، چه زمانی، چه داده‌ای را جمع‌آوری کرده، کجا ذخیره شده و چه تغییراتی (اگر) ایجاد شده است. استفاده از ابزارهایی که hash ایجاد می‌کنند (مثل SHA-256) برای هر فایل شواهد ضروری است.",
+    "hint": "- **حتماً به خاطر بسپار**: بدون Chain معتبر، شواهد قانونی نیستند.\n- ثبت زمان، فرد مسئول و تغییرات.\n- hash اولیه و نهایی را ذخیره کن.",
+    "extra": "### تجربه عملی:\n- جمع‌آوری memory dump از یک سرور آلوده.\n- ثبت در فرم Chain of Custody: نام جمع‌آورنده، تاریخ/ساعت، شماره سریال سرور، hash فایل.\n- انتقال به media امن و ثبت تحویل به تیم Forensics.\n\n### نکته Tier 3:\n- حتی در IR غیرقضایی، chain قوی باعث اعتماد به نتایج تحلیل می‌شود.",
+    "page": 2,
+    "Rel": "IR,chain-of-custody,evidence,hashing",
+    "meta": {}
   },
   {
     "id": "ch2_q5",
     "type": "short",
-    "question": "فرق Incident و Event چیست؟",
-    "answer": "- **Event:** هر رویداد ثبت‌شده.\n- **Incident:** Eventی که تهدید یا تاثیر منفی واقعی دارد.",
-    "hint": "- هر Incident یک Event است، اما هر Event Incident نیست.",
-    "extra": "مثال: یک login موفق = Event، اما login موفق از IP روسیه روی اکانت مدیر بدون اجازه = Incident."
+    "question": "IOC و IOA چه تفاوتی دارند و چگونه در Triage استفاده می‌شوند؟",
+    "answer": "IOC (Indicator of Compromise) نشانه‌ای از وقوع حمله است، مثل hash فایل مخرب یا IP سرور C2. IOA (Indicator of Attack) نشانه‌ای از تلاش یا نیت حمله است، حتی اگر هنوز compromise کامل رخ نداده باشد، مثل اجرای ابزار credential dumping. در Tier 3، IOC برای واکنش به حمله‌های گذشته و IOA برای پیشگیری از حمله‌های جاری استفاده می‌شود. یک تیم بالغ باید بتواند هر دو را در Triage لحاظ کند.",
+    "hint": "- **حتماً به خاطر بسپار**: IOC = گذشته، IOA = حال/آینده.\n- IOA کمک به proactive defense.\n- IOC بیشتر reactive است.",
+    "extra": "### مثال عملی:\n- IOC: آدرس IP که در incident قبلی به عنوان C2 شناسایی شده.\n- IOA: اجرای `procdump.exe` روی LSASS در endpoint بدون مجوز.\n\n### Tier 3:\n- ترکیب IOC/IOA در correlation rules باعث کشف زودتر حملات می‌شود.\n- بعضی IOAها به IOC تبدیل می‌شوند اگر حمله ادامه یابد.",
+    "page": 2,
+    "Rel": "IR,IOC,IOA,triage,proactive",
+    "meta": {}
   },
   {
     "id": "ch2_q6",
     "type": "short",
-    "question": "چطور Severity یک Incident را تعیین می‌کنید؟",
-    "answer": "- تاثیر روی سیستم‌ها.\n- دامنه گسترش.\n- حساسیت داده‌ها.\n- فوریت پاسخ.",
-    "hint": "- Severity = **Impact + Urgency**.",
-    "extra": "از ماتریس ریسک استفاده می‌شود: Low / Medium / High / Critical."
+    "question": "Escalation در IR چیست و در چه شرایطی باید انجام شود؟",
+    "answer": "Escalation فرآیندی است که در آن یک Incident به سطح بالاتر (Tier 3، Incident Commander یا تیم‌های تخصصی) منتقل می‌شود. شرایط شامل حوادث با Severity بالا، Scope گسترده، تهدید به دارایی‌های حیاتی یا حملاتی که از توان پاسخ تیم فعلی خارج است می‌باشد. در Tier 3، Escalation نه‌تنها به افراد بلکه به واحدهای مرتبط مانند تیم حقوقی، مدیریت ریسک یا حتی CERT ملی نیز ممکن است باشد.",
+    "hint": "- **حتماً به خاطر بسپار**: Escalate زودتر بهتر از دیرتر.\n- بر اساس SLA و Playbook عمل کن.\n- در Escalation، context کامل ارائه بده.",
+    "extra": "### سناریو عملی:\n- حمله با باج‌افزار روی فایل سرور مالی.\n- Tier 2 alert را تشخیص می‌دهد ولی به دلیل حساسیت داده، بلافاصله Tier 3 درگیر می‌شود.\n- Tier 3 ضمن containment، تیم حقوقی و PR را مطلع می‌کند.\n\n### نکته:\n- Escalation باید با گزارش دقیق (چه اتفاقی افتاده، چه اقداماتی شده، چه باقی مانده) انجام شود.\n- Escalation بی‌مورد → خستگی تیم‌های بالادستی.",
+    "page": 2,
+    "Rel": "IR,escalation,severity,SLA,playbook",
+    "meta": {
+      "SLA": "Service Level Agreement: توافق‌نامه سطح خدمات که زمان پاسخ‌گویی و رفع مشکل را تعریف می‌کند."
+    }
   },
   {
     "id": "ch2_q7",
     "type": "short",
-    "question": "Root Cause Analysis (RCA) چیست؟",
-    "answer": "روش یافتن علت اصلی حادثه.",
-    "hint": "- **RCA** = پیدا کردن ریشه مشکل، نه فقط علائم.",
-    "extra": "مثال: شناسایی اینکه علت نفوذ، پچ‌نشدن آسیب‌پذیری Log4j بوده است."
+    "question": "مدیریت چند Incident هم‌زمان در SOC Tier 3 چگونه انجام می‌شود؟",
+    "answer": "در Tier 3، مدیریت هم‌زمان چند Incident مستلزم اولویت‌بندی دقیق، تقسیم منابع، و مانیتورینگ پیوسته وضعیت هر حادثه است. استفاده از Incident Queue و Severity Matrix برای ترتیب‌دهی کارها حیاتی است. Tier 3 باید بتواند بخشی از کار را به Tier پایین‌تر Delegate کند تا روی حوادث Critical تمرکز کند، بدون اینکه حادثه‌های با اولویت پایین فراموش شوند.",
+    "hint": "- **حتماً به خاطر بسپار**: Queue و Matrix ابزار کلیدی‌اند.\n- منابع محدود را مدیریت کن.\n- Delegation یک مهارت است.",
+    "extra": "### سناریو:\n- Incident 1: شناسایی malware در یک endpoint.\n- Incident 2: حمله brute force روی VPN.\n- Incident 3: هشدار lateral movement از EDR.\n- Tier 3 Incident 2 و 3 را شخصاً رسیدگی می‌کند و Incident 1 را به Tier 2 می‌دهد.\n\n### نکته:\n- حوادث Critical باید هم‌زمان مانیتور شوند.\n- مستندسازی اقدامات در همه Incidentها برای انتقال شیفت بعدی ضروری است.",
+    "page": 2,
+    "Rel": "IR,incident-management,priority,queue,delegation",
+    "meta": {}
   },
   {
     "id": "ch2_q8",
     "type": "short",
-    "question": "Forensic Imaging چیست و چرا مهم است؟",
-    "answer": "ایجاد یک کپی بیتی دقیق از یک سیستم برای تحلیل شواهد.",
-    "hint": "- **Forensic Image** = عکس فوری کامل از سیستم.",
-    "extra": "برای جلوگیری از تغییر شواهد در طول بررسی."
+    "question": "Recovery در IR چیست و چه خطراتی دارد؟",
+    "answer": "Recovery بازگرداندن سیستم‌ها و سرویس‌ها به حالت عملیاتی امن پس از Eradication است. در Tier 3، این مرحله فقط پس از تأیید حذف کامل تهدید انجام می‌شود. خطر اصلی بازگرداندن از بکاپ آلوده یا بازگشت سیستم قبل از رفع کامل آسیب‌پذیری است که می‌تواند حمله را دوباره فعال کند.",
+    "hint": "- **حتماً به خاطر بسپار**: قبل از Recovery، آسیب‌پذیری را ببند.\n- بکاپ را قبل از Restore اسکن کن.\n- Post-recovery مانیتورینگ انجام بده.",
+    "extra": "### تجربه عملی:\n- سرور وب پس از defacement با backup بازگردانی شد، اما چون patch امنیتی اعمال نشده بود، همان روز دوباره هک شد.\n- راه‌حل: قبل از restore، سیستم را ایزوله، patch و سپس مانیتورینگ فعال کردیم.\n\n### نکته Tier 3:\n- Recovery یک عملیات امنیتی و عملیاتی همزمان است، نه فقط restore.",
+    "page": 2,
+    "Rel": "IR,recovery,backup,monitoring,patch",
+    "meta": {}
   },
   {
     "id": "ch2_q9",
     "type": "short",
-    "question": "Containment کوتاه‌مدت و بلندمدت چه فرقی دارند؟",
-    "answer": "- **کوتاه‌مدت:** اقدام سریع برای جلوگیری از گسترش حمله.\n- **بلندمدت:** اقدامات پایدار برای حذف تهدید.",
-    "hint": "- کوتاه‌مدت = بستن درب آتش.\n- بلندمدت = بازسازی دیوار.",
-    "extra": "مثال کوتاه‌مدت: بستن پورت.\nمثال بلندمدت: آپدیت سیستم."
+    "question": "Lesson Learned در IR چیست و چرا برای Tier 3 حیاتی است؟",
+    "answer": "Lesson Learned فرایند تحلیل و ثبت تجربه‌ها پس از Incident است تا نقاط ضعف و قوت شناسایی شده و اقدامات بهبود ایجاد شود. برای Tier 3، این مرحله حیاتی است چون خروجی آن مستقیماً به بهبود Playbookها، Detection Rules و حتی طراحی شبکه منجر می‌شود.",
+    "hint": "- **حتماً به خاطر بسپار**: بدون Lesson Learned، همان اشتباه تکرار می‌شود.\n- مستندات IR را مرور کن.\n- به‌روزرسانی Playbook حیاتی است.",
+    "extra": "### سناریو واقعی:\n- پس از حمله phishing موفق، مشخص شد MFA برای OWA فعال نبود.\n- Lesson Learned: اضافه کردن MFA و آموزش کاربر.\n\n### نکته Tier 3:\n- جلسه Post-Mortem باید بدون سرزنش و با تمرکز بر فرایند باشد.\n- خروجی آن می‌تواند منجر به تغییر سیاست‌های امنیتی شود.",
+    "page": 2,
+    "Rel": "IR,lesson-learned,playbook,post-mortem",
+    "meta": {}
   },
   {
     "id": "ch2_q10",
     "type": "short",
-    "question": "Lessons Learned در Incident Response چرا حیاتی است؟",
-    "answer": "برای جلوگیری از تکرار حادثه و بهبود فرآیندها.",
-    "hint": "- **Lessons Learned** = واکسینه کردن سیستم.",
-    "extra": "مثال: بعد از حمله Ransomware، افزودن EDR به شبکه."
+    "question": "چگونه شواهد دیجیتال در Windows و Linux در جریان IR جمع‌آوری و حفظ می‌شوند؟",
+    "answer": "در Windows، جمع‌آوری شواهد شامل Memory Dump، Event Logs (Security, Sysmon)، Prefetch، Registry Keys و Artefacts مربوط به مرورگر است. در Linux، شامل Bash History، Syslog، /var/log/auth.log، auditd و memory capture است. Tier 3 باید ابزارهای مناسب برای جمع‌آوری Forensically Sound داشته باشد (مثل FTK Imager، Velociraptor، LiME) و Chain of Custody را رعایت کند.",
+    "hint": "- **حتماً به خاطر بسپار**: حفظ کامل Chain.\n- hash برای هر فایل شواهد.\n- ابزار معتبر و write-blocker استفاده کن.",
+    "extra": "### سناریو:\n- IR روی سرور لینوکسی با احتمال compromise.\n- جمع‌آوری /var/log/auth.log، memory capture با LiME، و bash_history.\n- Windows endpoint مشکوک: گرفتن Sysmon logs و dump LSASS.\n\n### نکته Tier 3:\n- جمع‌آوری سریع و بدون تغییر در داده‌ها مهم است چون مهاجم ممکن است artefacts را پاک کند.",
+    "page": 2,
+    "Rel": "IR,forensics,Windows,Linux,logs",
+    "meta": {}
   }
+
 ]

@@ -2,81 +2,67 @@
   {
     "id": "ch8_q1",
     "type": "short",
-    "question": "MITRE ATT&CK چیست؟",
-    "answer": "**MITRE ATT&CK** یک چارچوب دانش‌محور از تاکتیک‌ها، تکنیک‌ها و رویه‌های مهاجمان (TTPs) است که بر اساس مشاهدات واقعی حملات دنیای واقعی ساخته شده. این ماتریس به تیم‌های SOC کمک می‌کند رفتار مهاجم را مدل‌سازی، تهدیدات را شناسایی، و شکاف‌های دفاعی را پیدا کنند.",
-    "hint": "- **MITRE = نقشه ذهنی هکر**\n- ستون‌ها = تاکتیک‌ها، خانه‌ها = تکنیک‌ها.\n- کاربرد: شکار تهدید، تحلیل حمله، آموزش تیم.",
-    "extra": "### ADHD نکته:\nمثل جدول مندلیف برای شیمی، ولی برای رفتار هکرها.\n\n### استفاده عملی:\n1. نگاشت IOC/IOA به تکنیک‌ها.\n2. تحلیل مسیر مهاجم.\n3. طراحی دفاع بر اساس شکاف‌ها."
+    "question": "تفاوت Sysmon Event ID 1 و Event ID 4688 چیست؟",
+    "answer": "Sysmon Event ID 1 ایجاد یک process را با جزئیات کامل (hash، parent، command line) گزارش می‌دهد، درحالی‌که Event ID 4688 (Security log) ایجاد process را با اطلاعات محدودتر و بدون hash ثبت می‌کند. در Tier 3، Sysmon برای hunting دقیق‌تر استفاده می‌شود چون context کامل‌تری می‌دهد.",
+    "hint": "- **حتماً به خاطر بسپار**: Sysmon ≠ جایگزین Security log، بلکه مکمل آن است.\n- Sysmon hash و parent-child chain می‌دهد.\n- 4688 بدون hash است و ممکن است در noisy systems زیاد شود.",
+    "extra": "### سناریو عملی:\n- LSASS dump در یک endpoint رخ داد.\n- Sysmon ID 1 نشان داد process با parent powershell.exe اجرا شده.\n- Event 4688 وجود داشت ولی command line کوتاه و ناقص بود.\n- Tier 3 توصیه: Sysmon و Security log را correlate کن برای detection و cross-validation.\n\n### نکته Hunting:\n- اگر فقط 4688 دارید، می‌توانید از process GUID (Sysmon) یا process ID + زمان برای link کردن به parent استفاده کنید.",
+    "page": 8,
+    "Rel": "Sysmon,EventID,process-creation,hunting",
+    "meta": {}
   },
   {
     "id": "ch8_q2",
     "type": "short",
-    "question": "تاکتیک‌ها و تکنیک‌ها در MITRE چه تفاوتی دارند؟",
-    "answer": "**Tactic** هدف کلی یا استراتژیک مهاجم در یک مرحله از حمله است، مثل «Privilege Escalation» یا «Credential Access». **Technique** روش مشخصی است که برای رسیدن به آن هدف استفاده می‌شود، مثل «Pass-the-Hash» یا «Keylogging». تاکتیک پاسخ به چرایی، تکنیک پاسخ به چگونگی می‌دهد.",
-    "hint": "- تاکتیک = چرا مهاجم این کار را می‌کند.\n- تکنیک = چطور انجام می‌دهد.\n- هر تاکتیک شامل چند تکنیک است.",
-    "extra": "### مثال:\n- **Tactic:** Credential Access.\n- **Technique:** Keylogging.\n\n### ADHD نکته:\nتاکتیک را مثل ژانر فیلم (مثلاً اکشن)، تکنیک را مثل صحنه خاص (تعقیب‌وگریز) تصور کن."
+    "question": "تفاوت Process ID و Process GUID در ویندوز چیست؟",
+    "answer": "Process ID (PID) یک عدد موقت است که سیستم به فرآیند فعال اختصاص می‌دهد و بعد از بسته شدن process ممکن است به process دیگری داده شود. Process GUID یک شناسه یکتا و دائمی برای آن instance است که Sysmon تولید می‌کند و در طول عمر process تغییر نمی‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: PID ممکن است recycle شود.\n- GUID = unique per process lifetime.\n- Sysmon GUID را برای correlation می‌سازد.",
+    "extra": "### تجربه Tier 3:\n- PID 1234 در دو زمان مختلف به دو process مختلف اشاره داشت.\n- استفاده از GUID باعث شد بتوانیم مسیر واقعی process malicious را دنبال کنیم بدون اینکه logها با PID قبلی اشتباه شوند.",
+    "page": 8,
+    "Rel": "PID,GUID,Sysmon,process-tracking",
+    "meta": {}
   },
   {
     "id": "ch8_q3",
     "type": "short",
-    "question": "NIST Incident Response Framework چیست؟",
-    "answer": "**NIST Incident Response Framework** استانداردی ارائه شده توسط مؤسسه ملی استاندارد و فناوری آمریکا است که چرخه پاسخ به حادثه را در چهار فاز تعریف می‌کند: **Preparation، Detection & Analysis، Containment/Eradication/Recovery، Post-Incident Activity**. این چارچوب راهنمای دقیق برای تیم‌های SOC جهت مدیریت حوادث سایبری به شکلی ساختاریافته است.",
-    "hint": "- NIST = راهنمای گام‌به‌گام مدیریت حادثه.\n- 4 فاز اصلی که باید کامل درک شوند.\n- در بسیاری از سازمان‌ها الزامی است.",
-    "extra": "### فازها:\n1. Preparation\n2. Detection & Analysis\n3. Containment, Eradication, Recovery\n4. Post-Incident Activity\n\n### ADHD نکته:\nNIST را مثل کتاب آشپزی تصور کن که دستور پخت دقیق برای مقابله با هر نوع حادثه دارد."
+    "question": "چطور Dump شدن LSASS را شناسایی می‌کنید؟",
+    "answer": "LSASS dump اغلب با ابزارهایی مثل procdump.exe یا process hacker انجام می‌شود. Sysmon Event ID 10 (process access) یا EDR alert نشان می‌دهد که process مشکوک به LSASS دسترسی یافته. Command line شامل lsass.exe یا '-ma' در procdump می‌تواند شاخص باشد.",
+    "hint": "- **حتماً به خاطر بسپار**: LSASS = هدف اصلی credential theft.\n- Monitor کنید هر دسترسی به lsass.exe توسط غیر-SYSTEM.\n- Dump = فایل با اندازه چند مگابایت.",
+    "extra": "### سناریو Tier 3:\n- EDR هشدار داد procdump.exe اجرا شده.\n- Sysmon نشان داد دسترسی به PID LSASS.\n- Memory dump پیدا شد و تحلیل شد → credential compromise.\n\n### توصیه عملی:\n- Block process مثل procdump در کاربران غیر-admin.\n- Enable Credential Guard برای محافظت LSASS.",
+    "page": 8,
+    "Rel": "LSASS,dump,Sysmon,credential-theft",
+    "meta": {}
   },
   {
     "id": "ch8_q4",
     "type": "short",
-    "question": "تفاوت NIST IR و MITRE ATT&CK چیست؟",
-    "answer": "**NIST IR** یک چارچوب فرآیندی برای پاسخ به حوادث است، یعنی می‌گوید «چه مراحلی» را طی کنید. **MITRE ATT&CK** یک چارچوب دانش فنی است که می‌گوید «مهاجم چه کارهایی می‌کند». NIST بیشتر بر چرخه مدیریت حادثه تمرکز دارد، MITRE بر جزئیات فنی رفتار مهاجم و تکنیک‌های مورد استفاده.",
-    "hint": "- NIST = فرآیند.\n- MITRE = رفتار و تکنیک.\n- ترکیب هر دو دید کامل می‌دهد.",
-    "extra": "### ADHD نکته:\nNIST را مثل نقشه سفر ببین، MITRE را مثل لیست خطرات و تاکتیک‌های مسیر."
+    "question": "AMSI چیست و چطور بدافزارها آن را bypass می‌کنند؟",
+    "answer": "AMSI (Antimalware Scan Interface) لایه‌ای در ویندوز است که کدهای اسکریپت (مثل PowerShell) را قبل از اجرا به آنتی‌ویروس می‌فرستد. مهاجمان با تغییر AMSI.dll در حافظه یا patch کردن تابع AmsiScanBuffer آن را bypass می‌کنند.",
+    "hint": "- **حتماً به خاطر بسپار**: AMSI = detection پیش از اجرا.\n- Bypass = memory patch، encoded scripts.\n- AMSI log در Event Viewer موجود است.",
+    "extra": "### تجربه واقعی:\n- Alert از AMSI نشان داد کد Base64 مشکوک decode می‌شود.\n- چند دقیقه بعد AMSI bypass با patch memory.\n- اقدام: Hunting روی load مشکوک AMSI.dll.\n\n### نکته Tier 3:\n- AMSI bypass می‌تواند IOC خوبی برای شناسایی حملات post-exploitation باشد.",
+    "page": 8,
+    "Rel": "AMSI,bypass,PowerShell,scan-interface",
+    "meta": {}
   },
   {
     "id": "ch8_q5",
     "type": "short",
-    "question": "Cyber Kill Chain چیست؟",
-    "answer": "**Cyber Kill Chain** مدلی از مراحل حمله سایبری است که توسط Lockheed Martin معرفی شده. شامل هفت مرحله از شناسایی تا اقدام نهایی مهاجم است. هدف این مدل این است که با شناسایی و قطع زنجیره در هر مرحله، جلوی موفقیت حمله گرفته شود. این مراحل شامل Reconnaissance، Weaponization، Delivery، Exploitation، Installation، Command & Control، Actions on Objectives است.",
-    "hint": "- Cyber Kill Chain = زنجیره مرگ حمله.\n- قطع زنجیره = شکست مهاجم.",
-    "extra": "### مراحل:\n1. Reconnaissance\n2. Weaponization\n3. Delivery\n4. Exploitation\n5. Installation\n6. Command & Control\n7. Actions on Objectives\n\n### ADHD نکته:\nمثل یک داستان هفت‌فصلی از دید مهاجم که باید قبل از فصل آخر متوقف شود."
+    "question": "مسیرهای متداول persistence در رجیستری چیست؟",
+    "answer": "مسیرهایی مثل `HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run` و `HKLM\\...\\Run` رایج‌ترین مکان برای اجرای خودکار بدافزار در لاگین هستند. Tier 3 این مسیرها را مرتباً مانیتور می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: Run و RunOnce کلیدهای اصلی persistence.\n- Autoruns مایکروسافت برای بررسی.",
+    "extra": "### سناریو:\n- Key جدید در HKCU\\...\\Run با نام AdobeUpdate ولی مسیر C:\\Temp.\n- اقدام: حذف key، اسکن سیستم.",
+    "page": 8,
+    "Rel": "registry,persistence,autorun,HKCU,HKLM",
+    "meta": {}
   },
   {
     "id": "ch8_q6",
     "type": "short",
-    "question": "CIS Controls چیست و چه کاربردی دارد؟",
-    "answer": "**CIS Controls** مجموعه‌ای از بهترین روش‌ها (Best Practices) برای امنیت سایبری است که توسط Center for Internet Security ارائه شده. این کنترل‌ها در سه دسته پایه، بنیادی و سازمانی تقسیم شده‌اند و هدفشان کاهش بیشترین تهدیدات رایج با کمترین هزینه است. تیم‌های SOC می‌توانند از این کنترل‌ها به عنوان چک‌لیست دفاعی استفاده کنند تا اطمینان یابند الزامات پایه امنیتی در همه سیستم‌ها رعایت شده است.",
-    "hint": "- CIS Controls = لیست کارهای خانه‌تکانی امنیت.\n- 3 دسته: پایه، بنیادی، سازمانی.\n- بهبود مستمر امنیت.",
-    "extra": "### مثال کنترل‌ها:\n- Inventory and Control of Hardware Assets\n- Secure Configuration\n- Malware Defenses\n\n### ADHD نکته:\nCIS Controls را مثل لیست تمیزکاری خانه ببین که اگر مرتب انجامش بدهی، احتمال دزدی کم می‌شود."
-  },
-  {
-    "id": "ch8_q7",
-    "type": "short",
-    "question": "ISO 27001 چیست و چه ارتباطی با SOC دارد؟",
-    "answer": "**ISO/IEC 27001** یک استاندارد بین‌المللی برای سیستم مدیریت امنیت اطلاعات (ISMS) است که چارچوبی برای سیاست‌ها، رویه‌ها، و کنترل‌های امنیتی ارائه می‌دهد. این استاندارد تضمین می‌کند که سازمان فرآیندهای لازم برای محافظت از محرمانگی، یکپارچگی و در دسترس بودن اطلاعات را دارد. برای SOC، این استاندارد به ایجاد سیاست‌ها، ممیزی‌ها و بهبود مداوم کمک می‌کند و ممکن است در برخی صنایع الزام قانونی داشته باشد.",
-    "hint": "- ISO 27001 = استاندارد مدیریت امنیت.\n- تمرکز بر ISMS.\n- کاربرد: سیاست‌گذاری، ممیزی، انطباق.",
-    "extra": "### ADHD نکته:\nISO 27001 را مثل دستورالعمل نگهداری کلیدهای گاوصندوق سازمان تصور کن."
-  },
-  {
-    "id": "ch8_q8",
-    "type": "short",
-    "question": "چگونه چارچوب‌ها با هم استفاده می‌شوند؟",
-    "answer": "در یک SOC بالغ، چارچوب‌های مختلف به صورت مکمل استفاده می‌شوند: **NIST IR** برای مدیریت فرآیند پاسخ به حادثه، **MITRE ATT&CK** برای تحلیل و مدل‌سازی رفتار مهاجم، **Cyber Kill Chain** برای شناسایی مراحل حمله و نقطه قطع آن، **CIS Controls** برای اطمینان از رعایت اقدامات پایه امنیتی، و **ISO 27001** برای چارچوب سیاست‌گذاری و انطباق. استفاده ترکیبی این چارچوب‌ها باعث ایجاد یک دفاع چندلایه و جامع می‌شود که توان مقابله با تهدیدات پیچیده را دارد.",
-    "hint": "- چارچوب‌ها = ابزارهای مکمل.\n- ترکیب = دید استراتژیک + دفاع عملیاتی.",
-    "extra": "### ADHD نکته:\nاین ترکیب را مثل تیمی از قهرمانان با قدرت‌های مختلف تصور کن که با هم شهر را از تهدیدات حفظ می‌کنند."
-  },
-  {
-    "id": "ch8_q9",
-    "type": "short",
-    "question": "مزیت شناخت چارچوب‌ها برای Tier 3 چیست؟",
-    "answer": "Tier 3 با شناخت دقیق چارچوب‌ها می‌تواند تحلیل حوادث را سریع‌تر و دقیق‌تر انجام دهد، شکاف‌های امنیتی را شناسایی کند، و بهترین اقدامات را برای مهار و پیشگیری پیشنهاد دهد. همچنین این شناخت به Tier 3 امکان می‌دهد تا زبان مشترکی با مدیران، تیم انطباق، و سایر تیم‌های امنیتی داشته باشد و گزارش‌های استاندارد و قابل درک ارائه دهد که در تصمیم‌گیری استراتژیک موثر باشد.",
-    "hint": "- Tier 3 = مترجم بین فنی و استراتژیک.\n- چارچوب‌ها = زبان مشترک.",
-    "extra": "### ADHD نکته:\nشناخت چارچوب‌ها مثل دانستن قوانین بازی قبل از شروع مسابقه است."
-  },
-  {
-    "id": "ch8_q10",
-    "type": "short",
-    "question": "چگونه از چارچوب‌ها برای آموزش تیم استفاده می‌شود؟",
-    "answer": "چارچوب‌ها ابزاری عالی برای آموزش و ارتقاء سطح دانش تیم SOC هستند. با استفاده از **MITRE ATT&CK**، تیم می‌تواند سناریوهای واقعی حمله را تمرین کند؛ با **NIST IR**، فرآیند پاسخ به حادثه را شبیه‌سازی کند؛ با **Cyber Kill Chain**، مراحل یک حمله را تحلیل و نقطه توقف آن را تمرین کند؛ با **CIS Controls**، بررسی چک‌لیست امنیتی را انجام دهد؛ و با **ISO 27001**، سیاست‌ها و استانداردها را یاد بگیرد. آموزش مبتنی بر چارچوب‌ها باعث می‌شود دانش تئوری و عملی تیم هماهنگ و ساختاریافته باشد.",
-    "hint": "- آموزش چارچوبی = یادگیری با ساختار.\n- تمرین سناریو + رعایت استاندارد.\n- نتیجه: تیم منسجم و آماده.",
-    "extra": "### ADHD نکته:\nچارچوب‌ها را مثل نقشه‌های بازی در نظر بگیر که هر مرحله‌اش را می‌توانی با تیم تمرین کنی تا وقتی بازی واقعی شروع شد، همه بلد باشند چه کار کنند."
+    "question": "UAC Bypass چگونه شناسایی می‌شود؟",
+    "answer": "UAC bypass با اجرای برنامه در سطح admin بدون prompt انجام می‌شود، معمولاً با سوءاستفاده از auto-elevate executables یا COM hijacking. Hunting شامل شناسایی اجرای غیرعادی از مسیر System32 با کاربر non-admin است.",
+    "hint": "- **حتماً به خاطر بسپار**: مسیرهای System32 + بدون logon type admin = مشکوک.\n- COM hijack کلید رجیستری را تغییر می‌دهد.",
+    "extra": "### سناریو:\n- mshta.exe از مسیر System32 اجرا شد توسط کاربر non-admin.\n- بررسی command line نشان داد UAC prompt bypass شده.",
+    "page": 8,
+    "Rel": "UAC,bypass,privilege-escalation",
+    "meta": {}
   }
 ]

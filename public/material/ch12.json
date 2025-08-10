@@ -1,0 +1,79 @@
+[
+  {
+    "id": "ch12_q1",
+    "type": "short",
+    "question": "Advanced SPL چیست و در Tier 3 چه کاربردی دارد؟",
+    "answer": "Advanced SPL (Search Processing Language) در Splunk به معنای استفاده از توالی چند مرحله‌ای دستورات، بهینه‌سازی query برای سرعت و دقت، و بهره‌گیری از commandهای پیشرفته مثل `tstats`, `transaction`, `stats`, `eval`, `regex`, `spath` است. در SOC Tier 3، SPL پیشرفته برای threat hunting سفارشی، correlation بین داده‌های چند index، و ساخت detection پیچیده استفاده می‌شود. مثلاً برای شناسایی یک حمله Pass-the-Hash، داده‌های authentication را با netflow در یک جستجو ترکیب می‌کنیم و روی زمان‌بندی رویدادها تحلیل انجام می‌دهیم. Advanced SPL به ما امکان می‌دهد به جای reliance صرف بر ruleهای آماده، hunting خلاقانه انجام دهیم.",
+    "hint": "- **حتماً به خاطر بسپار**: SPL پیشرفته = ترکیب چند command.\n- استفاده از فیلتر اولیه برای performance.\n- حتماً index و sourcetype را در ابتدای جستجو بیاور.",
+    "extra": "### سناریوی Tier 3:\n- Incident: مشکوک به lateral movement با SMB.\n- SPL: ابتدا با `tstats` IPها را شناسایی → join با authentication logs → تحلیل توالی.\n\n### دام رایج:\n- نوشتن query بدون محدودیت زمانی = کندی شدید.\n\n### Pivot Concept:\n- دانستن SPL پیشرفته کلید integration با EDR APIها و ساخت گزارش‌های خودکار است.",
+    "page": 12,
+    "Rel": "SPL,search-optimization,threat-hunting",
+    "meta": {}
+  },
+  {
+    "id": "ch12_q2",
+    "type": "short",
+    "question": "کاربرد eval function در Splunk چیست؟",
+    "answer": "`eval` برای ایجاد یا تغییر فیلدها، محاسبات، و شرط‌گذاری در زمان جستجو استفاده می‌شود. Tier 3 از eval برای normalizing داده، ساخت indicatorهای ترکیبی، و حتی تشخیص حملات استفاده می‌کند. مثلاً در بررسی brute force، با eval تعداد تلاش‌ها را در بازه زمانی مشخص محاسبه و مقایسه می‌کنیم تا threshold شناسایی شود. در یک واقعه واقعی، eval برای ساخت فیلد \"SuspiciousLogin\" بر اساس ترکیب کشور، ASN، و ساعت لاگین استفاده شد که منجر به شناسایی حمله credential stuffing شد.",
+    "hint": "- **حتماً به خاطر بسپار**: eval = ساخت فیلد جدید.\n- می‌توان از توابع ریاضی، منطقی و رشته‌ای استفاده کرد.\n- قدرت eval در ترکیب چند شرط است.",
+    "extra": "### نمونه عملی:\n`eval suspicious=if(country!=\"IR\" AND hour>0 AND hour<5,1,0)`\n\n### نکته:\n- eval برای enrichment موقت عالی است.\n- Trap: ساخت فیلد بدون فیلتر اولیه → فشار روی memory.",
+    "page": 12,
+    "Rel": "eval,SPL,field-creation",
+    "meta": {}
+  },
+  {
+    "id": "ch12_q3",
+    "type": "short",
+    "question": "تابع len() در Splunk چه کاربردی دارد؟",
+    "answer": "تابع len() طول یک رشته را برمی‌گرداند. در Tier 3، از len() برای بررسی طول غیرعادی فیلدها استفاده می‌کنیم — مثلاً URL بیش‌ازحد بلند که ممکن است نشانگر data exfiltration یا obfuscation باشد. در یک case واقعی، از len() روی فیلد query استفاده کردیم و درخواست‌هایی با طول بیش از 1500 کاراکتر شناسایی شد که منجر به کشف یک Blind SQLi شد.",
+    "hint": "- **حتماً به خاطر بسپار**: len() برای hunting رشته‌های غیرعادی عالی است.\n- طول زیاد همیشه نشانه بد نیست — context مهم است.",
+    "extra": "### کاربرد:\n- فیلتر کردن ایمیل‌های با subject غیرعادی بلند.\n- شناسایی payloadهای encoded در URL.\n\n### دام رایج:\n- threshold ثابت برای همه داده‌ها استفاده نکنید — بسته به اپلیکیشن متفاوت است.",
+    "page": 12,
+    "Rel": "len,SPL,anomaly-detection",
+    "meta": {}
+  },
+  {
+    "id": "ch12_q4",
+    "type": "short",
+    "question": "Sequence events در Splunk چیست و چه کاربردی دارد؟",
+    "answer": "Sequence events در Splunk ES برای تعریف توالی رویدادها استفاده می‌شود تا بتوانیم یک زنجیره حمله را به‌عنوان یک notable واحد شناسایی کنیم. در Tier 3، با sequence می‌توانیم detection را بر اساس kill chain بسازیم — مثلاً: 1) لاگین از IP مشکوک → 2) اجرای PowerShell → 3) اتصال به دامنه خارجی. این باعث کاهش false positive و افزایش context می‌شود. در یک case واقعی، sequence باعث شد حمله‌ای که در دو alert جدا ثبت شده بود به‌عنوان یک incident واحد دیده شود.",
+    "hint": "- **حتماً به خاطر بسپار**: Sequence = context بین رویدادها.\n- برای hunting رفتار ترکیبی بسیار مفید است.",
+    "extra": "### نکات عملی:\n- ترتیب رویداد مهم است.\n- هر رویداد باید شرط زمانی داشته باشد.\n- Trap: بازه زمانی بیش‌ازحد بزرگ باعث noise می‌شود.",
+    "page": 12,
+    "Rel": "sequence-events,ES,correlation",
+    "meta": {}
+  },
+  {
+    "id": "ch12_q5",
+    "type": "short",
+    "question": "Workflow automation در SOC چیست؟",
+    "answer": "Workflow automation یعنی اتصال SIEM به ابزارهای دیگر (EDR، SOAR، threat intel) برای انجام پاسخ خودکار یا نیمه‌خودکار. Tier 3 از automation برای کاهش MTTR و حذف کارهای تکراری استفاده می‌کند. مثال: شناسایی IP مخرب در Splunk → ارسال خودکار به firewall API برای block → ثبت در ticketing system. در یک واقعه واقعی، این automation جلوی 2000 تلاش brute force را ظرف چند دقیقه گرفت.",
+    "hint": "- **حتماً به خاطر بسپار**: Automation = سرعت + دقت.\n- باید با playbook تست‌شده باشد.",
+    "extra": "### اجزای کلیدی:\n- Trigger از SIEM.\n- Action در EDR/NTA.\n- Feedback loop برای تایید.\n\n### دام رایج:\n- Automation بدون شرط دقیق → block اشتباه کاربر مجاز.",
+    "page": 12,
+    "Rel": "automation,SOAR,SIEM-integration",
+    "meta": {}
+  },
+  {
+    "id": "ch12_q6",
+    "type": "short",
+    "question": "چطور Splunk را با EDR و NTA یکپارچه می‌کنید؟",
+    "answer": "با استفاده از API یا connectorهای آماده، داده‌های EDR/NTA را وارد Splunk کرده و correlation بین telemetry endpoint و network traffic ایجاد می‌کنیم. Tier 3 از این integration برای hunting چندلایه استفاده می‌کند — مثلاً مشاهده اجرای مشکوک در EDR و بررسی همزمان ترافیک شبکه همان host.",
+    "hint": "- **حتماً به خاطر بسپار**: Integration = دید یکپارچه.\n- API keyها را امن نگه دارید.",
+    "extra": "### سناریو:\n- EDR alert → جستجو در NTA برای ارتباطات خروجی.\n- نتیجه: C2 over HTTPS شناسایی شد.",
+    "page": 12,
+    "Rel": "integration,EDR,NTA,correlation",
+    "meta": {}
+  },
+  {
+    "id": "ch12_q7",
+    "type": "short",
+    "question": "چطور داشبوردهای hunting سفارشی در Splunk می‌سازید؟",
+    "answer": "با استفاده از panelهای سفارشی، base searchهای بهینه و visualهای قابل فهم برای تیم. Tier 3 از داشبورد برای نمایش زنده KPI حملات، روندها، و موارد anomaly استفاده می‌کند. در یک عملیات hunting، داشبوردی ساختیم که حملات brute force را بر اساس کشور و ASN با رنگ‌بندی نشان می‌داد و امکان pivot مستقیم به raw events داشت.",
+    "hint": "- **حتماً به خاطر بسپار**: داشبورد باید actionable باشد.\n- base search مشترک = performance بهتر.",
+    "extra": "### نکته:\n- از time picker و drilldown برای عمیق شدن استفاده کنید.\n- Trap: داشبورد سنگین = لود کند.",
+    "page": 12,
+    "Rel": "dashboard,hunting,Splunk",
+    "meta": {}
+  }
+]

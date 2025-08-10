@@ -1,0 +1,62 @@
+[
+  {
+    "id": "ch10_q1",
+    "type": "short",
+    "question": "تفاوت IOC و IOA چیست و هر کدام در Threat Hunting چه کاربردی دارند؟",
+    "answer": "IOC (Indicator of Compromise) نشانه‌های فنی هستند که وجود یک رخنه یا حمله را تأیید می‌کنند — مثل hash بدافزار، دامنه C2، یا آدرس IP مهاجم. IOA (Indicator of Attack) الگوهای رفتاری یا تاکتیکی هستند که نیت حمله را نشان می‌دهند، حتی اگر هنوز compromise کامل نشده باشد — مثل ایجاد غیرعادی یک scheduled task یا اجرای دستورات مشکوک از PowerShell. در SOC Tier 3، IOC برای شناسایی سریع تهدیدات شناخته‌شده به کار می‌رود، در حالی که IOA برای کشف حملات جدید و ناشناخته حیاتی است. در یک واقعه واقعی، وقتی lateral movement با WMI انجام شد، هیچ IOC شناخته‌شده‌ای وجود نداشت ولی IOA (اتصال غیرعادی WMI از سیستم کاربری به DC) باعث شناسایی شد.",
+    "hint": "- **حتماً به خاطر بسپار**: IOC = فکت فنی تایید حمله، IOA = رفتار مشکوک.\n- IOC سریع ولی محدود به شناخته‌شده‌ها.\n- IOA گسترده‌تر ولی نیازمند تحلیل.\n- در Threat Hunting، ترکیب این دو بهترین نتیجه را می‌دهد.",
+    "extra": "### سناریو Tier 3:\n- IOC: SHA256 بدافزار از VirusTotal دریافت شد و در Splunk برای تطبیق با لاگ‌های EDR جستجو شد.\n- IOA: شناسایی chain اجرای mshta.exe با دانلود از دامنه جدید، بدون match در threat feed.\n\n### ارتباط مفهومی:\n- MITRE ATT&CK بیشتر بر IOA متمرکز است چون رفتار را مدل می‌کند.\n- IOC feedها (AlienVault OTX, MISP) سریع ولی زود منقضی می‌شوند.\n- **دام رایج**: تمرکز بیش از حد روی IOC و نادیده گرفتن رفتارهای غیرعادی.",
+    "page": 10,
+    "Rel": "IOC,IOA,threat-hunting,incident-response",
+    "meta": {
+      "IOC": "Indicator of Compromise — نشانه فنی تأیید رخنه.",
+      "IOA": "Indicator of Attack — نشانه رفتاری حمله در حال وقوع."
+    }
+  },
+  {
+    "id": "ch10_q2",
+    "type": "short",
+    "question": "چطور از MITRE ATT&CK برای بهبود Detection استفاده می‌کنید؟",
+    "answer": "MITRE ATT&CK یک چارچوب تاکتیک‌ها و تکنیک‌های مهاجمان است. در Tier 3، از آن برای map کردن رویدادها به تکنیک‌ها استفاده می‌کنیم تا شکاف‌های detection را پیدا کنیم. به‌عنوان مثال، اگر لاگ‌های شما هیچ پوششی برای T1059 (Command and Scripting Interpreter) ندارند، یعنی باید detection برای PowerShell و CMD اضافه کنید. در یک عملیات واقعی، با استفاده از ATT&CK Navigator، تکنیک‌های استفاده‌شده در یک intrusion را مشخص و coverage gap را شناسایی کردیم و ruleهای Splunk ES را بر همان اساس نوشتیم.",
+    "hint": "- **حتماً به خاطر بسپار**: ATT&CK = زبان مشترک بین تیم‌ها.\n- هر تکنیک یک شناسه دارد (Txxxx).\n- Navigator برای gap analysis حیاتی است.",
+    "extra": "### روش Tier 3:\n1. Parse رویدادها و map به Tactic/Tactic.\n2. استفاده از color coding در Navigator برای نمایش coverage.\n3. ساخت detection جدید برای تکنیک‌های قرمز.\n\n### نکته عملی:\n- ارتباط با Purple Team برای تست detection.\n- Mapping منظم باعث کاهش blind spot می‌شود.",
+    "page": 10,
+    "Rel": "MITRE,ATT&CK,detection,Navigator",
+    "meta": {
+      "ATT&CK": "Adversarial Tactics, Techniques, and Common Knowledge — چارچوب رفتار مهاجم."
+    }
+  },
+  {
+    "id": "ch10_q3",
+    "type": "short",
+    "question": "ابزارهای OSINT پرکاربرد در Threat Intelligence چیست؟",
+    "answer": "ابزارهایی مثل VirusTotal، Shodan، Censys، AlienVault OTX، MISP، و URLScan.io برای جمع‌آوری اطلاعات عمومی تهدیدات به کار می‌روند. در SOC Tier 3، OSINT برای enrich کردن آدرس IP مشکوک یا hash فایل استفاده می‌شود. در یک کیس واقعی، دامنه ناشناخته را در URLScan جستجو کردیم و فهمیدیم زیرساخت fast flux دارد.",
+    "hint": "- **حتماً به خاطر بسپار**: OSINT = اطلاعات رایگان و عمومی.\n- همیشه با منبع دوم تایید کنید.\n- threat actor ممکن است data poisoning کند.",
+    "extra": "### تجربه عملی:\n- IOC از EDR → جستجو در VirusTotal → match در 5 AV.\n- IP scan در Shodan → پورت RDP باز + بنر مشکوک.\n\n### دام رایج:\n- استفاده کورکورانه از OSINT بدون تایید منجر به false positive می‌شود.",
+    "page": 10,
+    "Rel": "OSINT,threat-intelligence,enrichment",
+    "meta": {}
+  },
+  {
+    "id": "ch10_q4",
+    "type": "short",
+    "question": "Enrichment در Windows logs چگونه انجام می‌شود؟",
+    "answer": "Enrichment یعنی اضافه کردن context به لاگ خام — مثل geoIP، مالک دامنه، یا دسته‌بندی تهدید. در SOC Tier 3، با lookupها و threat intel feeds، آدرس IP در Security log به کشور و ASN و reputation tag enrich می‌شود. این کار در Splunk با lookup table یا enrichment app انجام می‌شود.",
+    "hint": "- **حتماً به خاطر بسپار**: Enrichment = context + سرعت تحلیل.\n- GeoIP lookup و Threat Feed lookup پرکاربرد.",
+    "extra": "### سناریو واقعی:\n- IP brute force از خارج کشور.\n- Enrichment نشان داد ASN به یک دیتاسنتر bulletproof تعلق دارد.\n- اقدام: block ASN.",
+    "page": 10,
+    "Rel": "enrichment,windows-logs,lookup",
+    "meta": {}
+  },
+  {
+    "id": "ch10_q5",
+    "type": "short",
+    "question": "چطور Lateral Movement را در لاگ‌ها شناسایی می‌کنید؟",
+    "answer": "با بررسی الگوهای اتصال غیرعادی بین سیستم‌ها — مثل استفاده از SMB، WMI یا RDP از سیستم‌های کاربری به سرورهای حساس — و correlation بین لاگ‌های شبکه و endpoint. در یک کیس واقعی، WMI Exec از یک PC کارمند به DC ثبت شد که IOC نداشت ولی IOA قوی بود.",
+    "hint": "- **حتماً به خاطر بسپار**: Lateral ≠ همیشه malware.\n- همواره با context کاربر چک شود.",
+    "extra": "### Hunting Tip:\n- Event ID 4624 + Logon Type 3 از host غیرمنتظره.\n- Combine با netflow برای تایید.",
+    "page": 10,
+    "Rel": "lateral-movement,SMB,WMI,RDP",
+    "meta": {}
+  }
+]

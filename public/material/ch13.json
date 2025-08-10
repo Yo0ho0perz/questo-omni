@@ -1,0 +1,246 @@
+[
+    {
+        "id": "ch13_q1",
+        "type": "short",
+        "question": "حمله Slow Loris چیست و در لایه SOC Tier 3 چطور شناسایی می‌شود؟",
+        "answer": "Slow Loris حمله‌ای است که با باز نگه‌داشتن تعداد زیادی اتصال HTTP نیمه‌کاره، منابع سرور را خسته می‌کند. این حمله در لایه Application (HTTP) انجام می‌شود و برخلاف DoS کلاسیک، نیاز به پهنای باند زیاد ندارد. در SOC Tier 3، شناسایی با بررسی تعداد زیاد TCP connectionهایی که در حالت `ESTABLISHED` یا `SYN_RECEIVED` هستند ولی دیتا رد و بدل نمی‌کنند، انجام می‌شود. در یک کیس واقعی، با correlation لاگ‌های web server و netflow، IPهایی با ده‌ها اتصال نیمه‌کاره به یک endpoint خاص شناسایی و بلاک شد.",
+        "hint": "- **حتماً به خاطر بسپار**: Slow Loris = مصرف منابع با اتصال طولانی.\n- به دنبال connectionهای idle با مدت طولانی باشید.\n- netflow + web logs بهترین ترکیب است.",
+        "extra": "### گام‌های تشخیص Tier 3:\n1. استخراج متریک طول عمر connection از netflow.\n2. match با access log برای بررسی requestهای ناقص.\n3. threshold بر اساس رفتار عادی سرور.\n\n### دام رایج:\n- اشتباه گرفتن slow API response با Slow Loris.\n\n### Pivot:\n- این تکنیک در تست WAF هم استفاده می‌شود؛ آشنایی با ابزارهایی مثل slowhttptest برای شبیه‌سازی ضروری است.",
+        "page": 13,
+        "Rel": "SlowLoris,HTTP-DoS,netflow-detection",
+        "meta": {
+            "Slow Loris": "حمله‌ای لایه ۷ که با ارسال آهسته داده، ارتباط را طولانی و منابع را مصرف می‌کند."
+        }
+    },
+    {
+        "id": "ch13_q2",
+        "type": "short",
+        "question": "فایل ssl.log در Zeek چه اطلاعاتی می‌دهد و چه کاربردی در IR دارد؟",
+        "answer": "ssl.log در Zeek رویدادهای مرتبط با handshake و sessionهای TLS/SSL را ثبت می‌کند، شامل نسخه پروتکل، cipher suite، certificate، و زمان handshake. در IR، این فایل برای شناسایی C2هایی که از TLS استفاده می‌کنند یا ترافیک رمزگذاری‌شده غیرعادی مفید است. در یک hunting واقعی، certificate با issuer ناشناخته و عمر بسیار کوتاه در ssl.log پیدا شد که نشانگر استفاده بدافزار از TLS self-signed بود.",
+        "hint": "- **حتماً به خاطر بسپار**: ssl.log = handshake info.\n- Certificate anomalies = سرنخ C2.\n- TLS version قدیمی می‌تواند ضعف باشد.",
+        "extra": "### سناریو Tier 3:\n1. جستجوی TLSv1.0/1.1 در ssl.log.\n2. بررسی CN و SAN برای دامنه‌های مشکوک.\n3. Correlate با conn.log برای پیدا کردن حجم و زمان انتقال.\n\n### دام رایج:\n- تکیه بر فیلد CN بدون SAN بررسی.",
+        "page": 13,
+        "Rel": "ssl.log,Zeek,TLS,IR",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q3",
+        "type": "short",
+        "question": "SOA record در DNS چیست و چطور می‌تواند در حملات یا IR مهم باشد؟",
+        "answer": "SOA (Start of Authority) رکوردی است که authoritative DNS server و اطلاعات zone مثل serial number، refresh، retry و expire را تعریف می‌کند. در IR، بررسی SOA برای شناسایی hijack یا misconfiguration دامنه مهم است. در یک حادثه، تغییر SOA به سرور ناشناخته باعث هدایت ترافیک مشتریان به یک phishing site شد.",
+        "hint": "- **حتماً به خاطر بسپار**: SOA = اطلاعات مالکیت و مدیریت zone.\n- تغییر غیرمجاز = احتمال hijack.",
+        "extra": "### Tier 3 Check:\n- Validate SOA در threat intel.\n- Compare با historical data.\n\n### دام رایج:\n- نادیده گرفتن تغییر subtle در serial number.",
+        "page": 13,
+        "Rel": "DNS,SOA,hijack-detection",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q4",
+        "type": "short",
+        "question": "حمله TTL-based DNS manipulation چیست؟",
+        "answer": "در این حمله، مهاجم TTL رکوردهای DNS را تغییر می‌دهد تا cache زمان کوتاه یا بلند ایجاد کند. TTL کوتاه اجازه می‌دهد مهاجم IP مقصد را سریع تغییر دهد (مثل Fast Flux)، TTL بلند می‌تواند اثر تغییر legit را کند کند. در SOC Tier 3، با مانیتور TTL تغییر یافته و مقایسه با baseline، این حمله شناسایی می‌شود.",
+        "hint": "- **حتماً به خاطر بسپار**: TTL غیرعادی = سرنخ.\n- Fast Flux معمولاً TTL کوتاه دارد.",
+        "extra": "### ابزار:\n- Zeek dns.log + threat intel feed.\n\n### سناریو:\n- TTL = 60 sec برای دامنه بانکی → alert.",
+        "page": 13,
+        "Rel": "DNS,TTL,FastFlux",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q5",
+        "type": "short",
+        "question": "Kerberoasting چیست و در Tier 3 چطور شناسایی می‌شود؟",
+        "answer": "Kerberoasting تکنیکی است که مهاجم از آن برای درخواست TGSهای سرویس حساب‌های SPNدار استفاده می‌کند، سپس این TGSها را آفلاین brute force می‌کند. در Tier 3، با بررسی رویداد 4769 ویندوز و تعداد زیاد TGS request از یک host غیرعادی شناسایی می‌شود. در یک واقعه واقعی، SIEM ما spike ناگهانی در 4769 با encryption type RC4 دید که نشانه Kerberoasting بود.",
+        "hint": "- **حتماً به خاطر بسپار**: 4769 spike = هشدار.\n- RC4 = راحت‌تر شکسته می‌شود.",
+        "extra": "### گام Tier 3:\n- Filter روی ServiceName غیرعادی.\n- Correlate با 4624 برای logon pattern.\n\n### دام رایج:\n- اشتباه گرفتن سرویس backup legitimate با Kerberoasting.",
+        "page": 13,
+        "Rel": "Kerberoasting,AD,Event4769",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q6",
+        "type": "short",
+        "question": "Blind SQL Injection چیست و چطور نوع آن را در Incident Response تشخیص می‌دهید؟",
+        "answer": "Blind SQLi زمانی رخ می‌دهد که خطای SQL نمایش داده نمی‌شود، اما مهاجم می‌تواند از طریق تغییرات رفتاری یا زمانی، داده‌ها را استخراج کند. سه نوع رایج: Boolean-based، Time-based، Out-of-Band. در SOC Tier 3، تشخیص با بررسی الگوهای تکراری در query strings، زمان پاسخ غیرعادی (time delay injection)، یا درخواست‌های DNS غیرمنتظره مرتبط با پایگاه داده انجام می‌شود.",
+        "hint": "- **حتماً به خاطر بسپار**: Blind = بدون پیام خطا.\n- Boolean: تغییر پاسخ True/False.\n- Time: تأخیر عمدی.",
+        "extra": "### سناریو عملی:\n- در یک حمله واقعی، endpoint جستجو در وب‌سایت باعث پاسخ 5 ثانیه‌ای به درخواست‌های خاص شد؛ با ابزار Zeek + WAF logs تأیید شد که مهاجم از `SLEEP(5)` استفاده کرده است.\n\n### دام رایج:\n- اشتباه گرفتن latency شبکه با delay حمله.\n\n### Pivot:\n- مانیتور لاگ DB برای queryهای غیرمعمول همزمان با این الگوها.",
+        "page": 13,
+        "Rel": "BlindSQLi,Boolean,Time,OOB",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q7",
+        "type": "short",
+        "question": "چطور از PowerShell Profile برای شناسایی یا اجرای حمله استفاده می‌شود؟",
+        "answer": "PowerShell Profile فایل اسکریپتی است که در شروع هر session اجرا می‌شود. مهاجم می‌تواند با اضافه کردن کد مخرب به آن، persistence ایجاد کند. در Tier 3، شناسایی با بررسی مسیرهای معمول (`$PROFILE`) و تطبیق hash آن‌ها با baseline انجام می‌شود. در یک کیس واقعی، پروفایل کاربر Admin شامل دستور مخفی `Invoke-WebRequest` برای دریافت payload از یک دامنه ناشناس بود.",
+        "hint": "- **حتماً به خاطر بسپار**: مسیر پیش‌فرض `%UserProfile%\\Documents\\WindowsPowerShell\\Microsoft.PowerShell_profile.ps1`.\n- تغییر hash = هشدار.",
+        "extra": "### گام عملی:\n1. لیست همه پروفایل‌ها با `dir $PROFILE.AllUsersAllHosts`.\n2. مقایسه با hash امن.\n3. بررسی محتوای base64 مشکوک.\n\n### دام رایج:\n- نادیده گرفتن پروفایل AllUsers که روی همه sessionها اثر دارد.",
+        "page": 13,
+        "Rel": "PowerShell,Profile,persistence",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q8",
+        "type": "short",
+        "question": "دستور transaction در Splunk چه کاربردی دارد و چه زمانی از آن استفاده می‌کنید؟",
+        "answer": "`transaction` رویدادها را بر اساس فیلد مشترک (مثل session ID یا IP) گروه‌بندی می‌کند و زمان شروع و پایان را مشخص می‌کند. در Tier 3، برای شناسایی توالی لاگین‌های مشکوک یا chain رویدادهای حمله بسیار مفید است. اما به دلیل سنگینی محاسبات، باید روی مجموعه داده محدود اجرا شود.",
+        "hint": "- **حتماً به خاطر بسپار**: transaction = گروه‌بندی رویدادهای مرتبط.\n- سنگین است، روی داده محدود استفاده شود.",
+        "extra": "### سناریو:\n- برای تحلیل Brute Force → Success، از transaction با فیلد user استفاده شد تا تعداد تلاش‌ها قبل از موفقیت مشخص شود.\n\n### دام رایج:\n- اجرای transaction بدون time span → مصرف بیش از حد RAM.",
+        "page": 13,
+        "Rel": "Splunk,transaction,session-analysis",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q9",
+        "type": "short",
+        "question": "تفاوت Sysmon Event ID 1 و Event ID 4688 در ویندوز چیست؟",
+        "answer": "Sysmon Event ID 1 شروع یک process را با جزئیات hash، مسیر و parent process ثبت می‌کند. Event ID 4688 هم شروع process را ثبت می‌کند اما در Windows Security log و با جزئیات امنیتی مثل کاربر اجراکننده. در Tier 3، ترکیب هر دو برای hunting parent-child anomalies (مثل cmd.exe → powershell.exe) حیاتی است.",
+        "hint": "- **حتماً به خاطر بسپار**: 1 = Sysmon، دقیق‌تر برای تحلیل فنی.\n- 4688 = Security، مناسب correlation با logon.",
+        "extra": "### سناریو:\n- در بررسی حمله DLL sideload، parent process مشکوک در 4688 دیده شد و با hash آن در Sysmon ID 1 تأیید شد.",
+        "page": 13,
+        "Rel": "Sysmon,Event1,4688,process",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q10",
+        "type": "short",
+        "question": "چطور Anomaly Detection در ICMP و DNS انجام می‌دهید؟",
+        "answer": "در ICMP، به دنبال پینگ‌های مکرر با payload غیرعادی یا الگوهای زمانی خاص می‌گردیم (مثل ICMP tunneling). در DNS، به دنبال دامنه‌های طولانی، درخواست‌های با حجم بالا یا رکوردهای TXT غیرمنتظره هستیم. در Tier 3، از Zeek و Suricata برای تولید alert بر اساس baseline ترافیک استفاده می‌شود.",
+        "hint": "- **حتماً به خاطر بسپار**: baseline → deviation = anomaly.\n- ICMP tunnel معمولاً interval ثابت دارد.",
+        "extra": "### سناریو:\n- DNS TXT record با 300 کاراکتر در دامنه ناشناس → احتمال data exfiltration.",
+        "page": 13,
+        "Rel": "ICMP,DNS,AnomalyDetection",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q11",
+        "type": "short",
+        "question": "کاربرد دستور eval و len() در Splunk چیست؟",
+        "answer": "`eval` برای ایجاد یا تغییر فیلد استفاده می‌شود. `len()` طول یک رشته را برمی‌گرداند. در Tier 3، این ترکیب برای شناسایی URL یا domainهایی که طول غیرعادی دارند (ممکن است C2 باشند) استفاده می‌شود.",
+        "hint": "- **حتماً به خاطر بسپار**: eval = پردازش، len = طول رشته.",
+        "extra": "### سناریو:\n- `eval domain_length=len(domain)` → فیلتر domain_length>50 → شناسایی DGA domains.",
+        "page": 13,
+        "Rel": "Splunk,eval,len,DGA",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q12",
+        "type": "short",
+        "question": "چطور حمله Pass-the-Hash و Over-Pass-the-Hash را شناسایی می‌کنید؟",
+        "answer": "Pass-the-Hash با استفاده از hash NTLM به جای رمز عبور واقعی برای احراز هویت است. Over-Pass-the-Hash از hash برای درخواست TGT استفاده می‌کند. در Tier 3، این موارد با بررسی لاگ Kerberos (4768، 4769) و NTLM authentication و مقایسه زمان/منبع لاگین شناسایی می‌شود.",
+        "hint": "- **حتماً به خاطر بسپار**: PT-H = NTLM hash reuse.\n- Over-PtH = hash → Kerberos TGT.",
+        "extra": "### سناریو:\n- لاگین از IP ناشناس با NTLM و بدون interactive logon → PT-H.",
+        "page": 13,
+        "Rel": "PassTheHash,OverPass,NTLM,Kerberos",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q13",
+        "type": "short",
+        "question": "Security Descriptor چیست و تفاوت DACL و SACL چیست؟",
+        "answer": "Security Descriptor ساختاری است که اطلاعات امنیتی یک object را ذخیره می‌کند. DACL (Discretionary ACL) تعیین می‌کند چه کسی به object دسترسی دارد. SACL (System ACL) مشخص می‌کند چه عملیات‌هایی باید لاگ شوند. در Tier 3، تغییرات غیرمجاز در DACL/SACL می‌تواند نشانه privilege escalation باشد.",
+        "hint": "- **حتماً به خاطر بسپار**: DACL = مجوز، SACL = لاگ.",
+        "extra": "### سناریو:\n- تغییر DACL روی LSASS.exe برای اجازه دسترسی همه = هشدار.\n- فعال شدن SACL روی folder حساس برای IR ضروری است.",
+        "page": 13,
+        "Rel": "SecurityDescriptor,DACL,SACL",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q14",
+        "type": "short",
+        "question": "چطور Log4j exploitation را در محیط SOC Tier 3 شناسایی می‌کنید؟",
+        "answer": "Log4Shell (CVE-2021-44228) از طریق تزریق JNDI lookup در رشته‌های لاگ قابل بهره‌برداری است. در Tier 3، شناسایی با جستجوی الگوهایی مثل `${jndi:ldap://` یا `${jndi:rmi://` در لاگ‌های وب‌سرور و اپلیکیشن، بررسی outbound connectionهای غیرمعمول به پورت‌های 389/1389/1099 و correlation با exploit kitها انجام می‌شود.",
+        "hint": "- **حتماً به خاطر بسپار**: `${jndi:` = signature اصلی.\n- Monitor outbound LDAP/RMI.",
+        "extra": "### سناریو:\n- در حادثه واقعی، با Suricata rule برای `jndi:` و Zeek conn.log، اتصال غیرمنتظره به IP خارجی شناسایی و بلاک شد.\n\n### دام رایج:\n- تمرکز فقط روی لاگ HTTP و نادیده گرفتن سایر پروتکل‌ها.",
+        "page": 13,
+        "Rel": "Log4j,JNDI,LDAP,RMI,Zeek",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q15",
+        "type": "short",
+        "question": "Fast Flux DNS چیست و چگونه با Zeek و Threat Intel شناسایی می‌شود؟",
+        "answer": "Fast Flux تکنیکی است که با تغییر سریع IPهای دامنه در رکوردهای A یا AAAA و TTL کوتاه، شبکه Botnet را پنهان می‌کند. در Tier 3، با مانیتور تعداد زیاد IP برای یک دامنه طی مدت کوتاه و TTL کمتر از حد معمول (مثلاً <300s) شناسایی می‌شود.",
+        "hint": "- **حتماً به خاطر بسپار**: TTL کوتاه + IP متعدد = Fast Flux.\n- دامنه‌های C2 رایج‌ترین استفاده‌کننده.",
+        "extra": "### سناریو:\n- با Zeek dns.log و تجمیع بر اساس domain → تعداد IP unique > 10 در یک ساعت → هشدار.\n\n### دام رایج:\n- اشتباه گرفتن CDN legitimate با Fast Flux → نیاز به threat intel cross-check.",
+        "page": 13,
+        "Rel": "FastFlux,DNS,Botnet",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q16",
+        "type": "short",
+        "question": "Parent PID Spoofing چیست و چگونه شناسایی می‌شود؟",
+        "answer": "Parent PID Spoofing تکنیکی است که در آن مهاجم یک process جدید را با Parent Process ID جعلی اجرا می‌کند تا شبیه فرآیند مجاز به نظر برسد. در Tier 3، شناسایی با بررسی ناسازگاری بین Parent Image و Parent PID در Sysmon Event ID 1 و تطبیق با Event 4688 انجام می‌شود.",
+        "hint": "- **حتماً به خاطر بسپار**: PID spoofing = mismatch Parent Name/PID.",
+        "extra": "### سناریو:\n- در بررسی DLL sideload، svchost.exe به عنوان parent برای powershell.exe دیده شد که با baseline سازگار نبود.",
+        "page": 13,
+        "Rel": "ParentPIDSpoofing,Sysmon,Event1,4688",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q17",
+        "type": "short",
+        "question": "UAC Bypass چیست و چه Eventهایی در شناسایی آن مهم هستند؟",
+        "answer": "UAC Bypass روشی است که مهاجم بدون prompt تأیید کاربر، privilege خود را بالا می‌برد. معمول‌ترین روش‌ها شامل استفاده از auto-elevate COM objects و تغییرات registry است. در Tier 3، شناسایی با مانیتور Process Creation برای مسیرهای مشکوک (eventvwr.exe، sdclt.exe) و تغییرات رجیستری مرتبط انجام می‌شود.",
+        "hint": "- **حتماً به خاطر بسپار**: ابزارهای بومی ویندوز + autoElevate flag = سرنخ.",
+        "extra": "### سناریو:\n- با Sysmon Event 1 و registry Event 13، تغییر مسیر sdclt.exe به payload مخرب شناسایی شد.",
+        "page": 13,
+        "Rel": "UACBypass,PrivilegeEscalation,Sysmon",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q18",
+        "type": "short",
+        "question": "چطور داده‌های exfiltration را در شبکه شناسایی می‌کنید؟",
+        "answer": "داده‌برداری معمولاً شامل حجم بالای خروجی به مقصد غیرمعمول یا استفاده از پروتکل‌های غیرمنتظره (DNS, ICMP) است. در Tier 3، با تحلیل Netflow، Zeek و DPI برای الگوهای انتقال حجیم یا دامنه‌های تازه ثبت‌شده شناسایی می‌شود.",
+        "hint": "- **حتماً به خاطر بسپار**: Destination anomaly + حجم بالا = هشدار.",
+        "extra": "### سناریو:\n- کشف outbound DNS TXT بزرگ به دامنه ناشناس، منجر به کشف بدافزاری شد که داده‌ها را از طریق DNS exfil می‌کرد.",
+        "page": 13,
+        "Rel": "DataExfiltration,Netflow,DNS,ICMP",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q19",
+        "type": "short",
+        "question": "Mimikatz در عملیات مهاجم چه نقشی دارد و چه شاخص‌هایی برای شناسایی آن وجود دارد؟",
+        "answer": "Mimikatz ابزار پس‌برداشتی است که برای استخراج credentialها از حافظه LSASS و انجام حملات مثل Pass-the-Hash استفاده می‌شود. در Tier 3، شناسایی با مانیتور دسترسی به LSASS (Sysmon Event ID 10)، ایجاد dump file، و بارگذاری ماژول‌های مشکوک انجام می‌شود.",
+        "hint": "- **حتماً به خاطر بسپار**: دسترسی به LSASS = قرمز پررنگ.",
+        "extra": "### سناریو:\n- LSASS dump با procdump.exe در Event ID 10 دیده شد، بلافاصله host ایزوله شد.",
+        "page": 13,
+        "Rel": "Mimikatz,LSASS,CredentialDumping",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q20",
+        "type": "short",
+        "question": "PKI چیست و چگونه در HTTPS استفاده می‌شود؟",
+        "answer": "PKI (Public Key Infrastructure) سیستمی است که کلید عمومی/خصوصی و certificateها را مدیریت می‌کند. در HTTPS، PKI تضمین می‌کند که کلید عمومی وب‌سرور معتبر و توسط CA امضا شده است. در Tier 3، بررسی validity chain و revocation status برای تشخیص حملات MITM حیاتی است.",
+        "hint": "- **حتماً به خاطر بسپار**: PKI = CA + CRL/OCSP.",
+        "extra": "### سناریو:\n- certificate self-signed در ترافیک HTTPS → احتمال MITM.",
+        "page": 13,
+        "Rel": "PKI,HTTPS,CA,MITM",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q21",
+        "type": "short",
+        "question": "تفاوت IOC و IOA چیست و چرا هر دو در Hunting مهم هستند؟",
+        "answer": "IOC (Indicator of Compromise) شواهدی از وقوع حمله (مثل hash، IP مخرب) است. IOA (Indicator of Attack) نشانه‌هایی از نیت یا تکنیک حمله پیش از وقوع کامل است. در Tier 3، ترکیب هر دو برای hunting proactive ضروری است.",
+        "hint": "- **حتماً به خاطر بسپار**: IOC = بعد از compromise.\n- IOA = قبل از compromise.",
+        "extra": "### سناریو:\n- IOA: افزایش لاگین failed به اکانت ادمین.\n- IOC: hash شناخته‌شده بدافزار در فایل دانلود شده.",
+        "page": 13,
+        "Rel": "IOC,IOA,Hunting",
+        "meta": {}
+    },
+    {
+        "id": "ch13_q22",
+        "type": "short",
+        "question": "تفاوت Telnet و SSH از نظر امنیتی چیست؟",
+        "answer": "Telnet داده‌ها را به صورت cleartext منتقل می‌کند و هیچ encryption ندارد. SSH با استفاده از رمزنگاری (معمولاً RSA/ECDSA) و تبادل کلید امن، محرمانگی و یکپارچگی را تضمین می‌کند. در Tier 3، هرگونه ترافیک Telnet در شبکه باید پرچم قرمز باشد.",
+        "hint": "- **حتماً به خاطر بسپار**: Telnet = cleartext.\n- SSH = encrypted.",
+        "extra": "### سناریو:\n- کشف ترافیک Telnet از یک IoT device compromise شده، سریعاً ACL برای بلاک اعمال شد.",
+        "page": 13,
+        "Rel": "Telnet,SSH,Encryption",
+        "meta": {}
+    }
+]
