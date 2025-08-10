@@ -9,6 +9,7 @@ import { useMaterial } from '~/composables/useMaterial'
 import { useStorage } from '@vueuse/core'
 import shuffle from 'lodash-es/shuffle'
 
+/* ---------- Types ---------- */
 type QType = {
   id: string
   type: 'mcq' | 'short'
@@ -29,67 +30,70 @@ interface ChapterMeta {
   coverage_items?: string[]
 }
 
+/* ---------- Route & Data ---------- */
 const chapter = useRoute().params.chapter as string
 
-/* pull questions for this chapter */
+// Questions of this chapter
 const { material: questions } = useMaterial<QType>(chapter)
 
-/* pull chapter metadata from chapters.json */
+// Chapter metadata from chapters.json
 const { material: allChapters, timeAgo: chaptersTimeAgo } = useMaterial<ChapterMeta>('chapters')
 const chapterMeta = computed<ChapterMeta | null>(() => {
   const list = allChapters.value || []
   return (list.find(c => c.id === chapter) ?? null)
 })
 
-/* leitner state */
-const { state, dueIds } = useLeitner(chapter)
+/* ---------- Leitner state (safe, non-clobber) ---------- */
+// turn on debug logs by passing { debug: true }
+const { state, dueIds, makeStats } = useLeitner(chapter, { debug: false })
 
-/* control states */
+/* ---------- Controls ---------- */
 const view   = ref<'card' | 'list'>('card')
 const sort   = ref<'page' | 'random'>('page')
 const filter = ref<'due'|'wrong'|'highlight'|'all'>('all')
 const reveal = ref(false)
 
-/* header expand/collapse persisted per chapter */
+// Persist header coverage panel collapse state per chapter
 const collapsed = useStorage<boolean>(`hdr:${chapter}:collapsed`, true)
 
-/* list according to controls */
+/* ---------- Stats (robust: only for this chapter's questions) ---------- */
+const qIds = computed(() => (questions.value || []).map(q => q.id))
+const stats = makeStats(qIds) // { done, due, wrong, star, entries }
+
+const total = computed(() => qIds.value.length)
+const done  = computed(() => stats.done.value)
+// اگر «done» را فقط برای سوال‌هایی که واقعاً پاسخ داده شده‌اند بخواهید:
+// const done  = computed(() => stats.entries.value.filter(([, v]) => Array.isArray(v.log) && v.log.length > 0).length)
+
+const dueCount       = computed(() => stats.due.value)
+const wrongCount     = computed(() => stats.wrong.value)
+const highlightCount = computed(() => stats.star.value)
+
+/* ---------- List according to controls ---------- */
 const visible = computed(() => {
   let list = questions.value || []
-  // filter
+
   list = list.filter((q) => {
     const s = state.value[q.id]
     switch (filter.value) {
-      case 'due':       return !s || Date.now() >= s.next
-      case 'wrong':     return s?.log?.at(-1)?.ok === false
+      case 'due':       return !s || Date.now() >= (s.next || 0)
+      case 'wrong':     return !!(s?.log?.length) && s.log.at(-1)!.ok === false
       case 'highlight': return !!s?.highlight
       default:          return true
     }
   })
-  // sort
-  list = sort.value === 'random'
+
+  list = (sort.value === 'random')
     ? shuffle(list)
     : [...list].sort((a, b) => a.page - b.page)
+
   return list
 })
 
-/* progress + stats */
-const total = computed(() => questions.value?.length ?? 0)
-const done  = computed(() => Object.keys(state.value).length)
-const dueCount = computed(() =>
-  Object.entries(state.value).filter(([, v]) => Date.now() >= v.next).length
-)
-const wrongCount = computed(() =>
-  Object.values(state.value).filter(v => v.log?.length && v.log[v.log.length-1].ok === false).length
-)
-const highlightCount = computed(() =>
-  Object.values(state.value).filter(v => v.highlight).length
-)
-
-/* pretty % helper */
+/* ---------- Helpers ---------- */
 const pct = (num: number, den: number) => den > 0 ? Math.round((num/den)*100) : 0
 
-/* export */
+/* ---------- Export ---------- */
 function exportLog() {
   const blob = new Blob([JSON.stringify(state.value)], { type: 'application/json' })
   const url = URL.createObjectURL(blob)
@@ -100,11 +104,10 @@ function exportLog() {
   URL.revokeObjectURL(url)
 }
 
-/* debug */
-watchEffect(() => {
-  // console.log(`[study:${chapter}] visible`, visible.value)
-  // console.log(`[study:${chapter}] state`, state.value)
-})
+/* ---------- Debug (optional) ---------- */
+// watchEffect(() => {
+//   console.log(`[study:${chapter}] qIds=${qIds.value.length} storeKeys=${Object.keys(state.value||{}).length} used=${stats.entries.value.length}`)
+// })
 </script>
 
 <template>
@@ -117,7 +120,7 @@ watchEffect(() => {
   </NuxtLink>
 
   <main class="pt-14 pb-24 max-w-6xl mx-auto px-4 sm:px-6">
-    <!-- chapter header -->
+    <!-- Chapter header -->
     <section class="mb-6">
       <div class="rounded-2xl border bg-white shadow-sm overflow-hidden">
         <div class="p-5 flex items-start gap-4">
@@ -134,7 +137,7 @@ watchEffect(() => {
               </span>
             </div>
 
-            <!-- top stats pills -->
+            <!-- Top stats pills -->
             <div class="mt-3 flex flex-wrap gap-2 text-xs">
               <span class="px-2 py-1 rounded-full bg-gray-100 text-gray-700 border border-gray-200">
                 پیشرفت: {{ done }}/{{ total }} ({{ pct(done, total) }}%)
@@ -150,13 +153,13 @@ watchEffect(() => {
               </span>
             </div>
 
-            <!-- description markdown (always visible if exists) -->
+            <!-- Description markdown -->
             <div v-if="chapterMeta?.desc" class="mt-3">
               <MarkdownText :content="chapterMeta.desc" />
             </div>
           </div>
 
-          <!-- collapse toggle -->
+          <!-- Coverage toggle -->
           <button
             @click="collapsed = !collapsed"
             class="shrink-0 px-3 py-2 rounded-xl border hover:bg-gray-50 transition text-sm"
@@ -166,7 +169,7 @@ watchEffect(() => {
           </button>
         </div>
 
-        <!-- coverage panel -->
+        <!-- Coverage panel -->
         <div
           class="transition-[max-height] duration-300 ease-in-out border-t"
           :style="{ maxHeight: collapsed ? '0px' : '1000px' }"
@@ -179,7 +182,7 @@ watchEffect(() => {
               </div>
             </div>
 
-            <!-- coverage chips -->
+            <!-- Coverage chips -->
             <div v-if="chapterMeta?.coverage_items?.length" class="flex flex-wrap gap-2">
               <span
                 v-for="(item, i) in chapterMeta.coverage_items"
@@ -191,7 +194,7 @@ watchEffect(() => {
               </span>
             </div>
 
-            <!-- helpful legend -->
+            <!-- Helpful legend -->
             <div class="mt-5 grid sm:grid-cols-3 gap-3 text-xs">
               <div class="rounded-xl border p-3 bg-gray-50">
                 <div class="font-semibold mb-1">راهنما</div>
@@ -212,7 +215,7 @@ watchEffect(() => {
                 <div class="font-semibold mb-1">نحوهٔ سنجش</div>
                 <ul class="space-y-1 list-disc ms-4">
                   <li>Leitner Box با فواصل افزایشی.</li>
-                  <li>پیشرفت = تعداد سوال‌هایی که interacted شده‌اند.</li>
+                  <li>پیشرفت = تعداد سوال‌هایی که تعامل شده‌اند (Reveal/Answer).</li>
                 </ul>
               </div>
             </div>
@@ -222,7 +225,7 @@ watchEffect(() => {
       </div>
     </section>
 
-    <!-- questions -->
+    <!-- Questions -->
     <section>
       <component
         v-for="(q, i) in visible"
@@ -248,5 +251,5 @@ watchEffect(() => {
 </template>
 
 <style scoped>
-/* for header expand animation: container controls max-height inline */
+/* header expand animation: we control max-height inline */
 </style>
