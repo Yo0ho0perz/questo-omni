@@ -1,0 +1,57 @@
+[
+  {
+    "id": "ch3_q1",
+    "type": "short",
+    "question": "TCP 3-way handshake چیست و چگونه Tier 3 از آن برای شناسایی حملات استفاده می‌کند؟",
+    "answer": "TCP 3-way handshake فرآیند برقراری اتصال بین کلاینت و سرور است: SYN → SYN-ACK → ACK. در Tier 3، تحلیل این فرآیند در packet capture می‌تواند حملاتی مانند SYN Flood یا spoofing را آشکار کند. اگر تعداد زیاد SYN بدون ACK مشاهده شود، احتمال حمله DoS وجود دارد. همچنین، اختلاف غیرمعمول در sequence numbers می‌تواند نشان‌دهنده manipulation یا ابزارهایی مانند packet injection باشد.",
+    "hint": "- **حتماً به خاطر بسپار**: SYN → SYN-ACK → ACK.\n- SYN زیاد بدون ACK = مشکوک.\n- ابزار: Wireshark, Zeek.",
+    "extra": "### سناریو عملی:\n- Wireshark capture نشان داد که از یک IP خارجی هزاران SYN ارسال شده اما هیچ ACK برگشتی نیست.\n- تحلیل نشان داد backlog سرور پر شده و کاربران واقعی نمی‌توانند متصل شوند.\n\n### نکته Tier 3:\n- baseline رفتار handshake را بشناسید.\n- دستکاری TCP flags می‌تواند نشانه scanning پیشرفته باشد.",
+    "page": 3,
+    "Rel": "TCP,3-way-handshake,SYN-flood,packet-capture",
+    "meta": {}
+  },
+  {
+    "id": "ch3_q2",
+    "type": "short",
+    "question": "تفاوت TCP و UDP از منظر امنیت چیست؟",
+    "answer": "TCP یک پروتکل connection-oriented است که تحویل بسته‌ها را تضمین می‌کند و برای سرویس‌های حساس مثل وب و ایمیل استفاده می‌شود. UDP connectionless است، تحویل را تضمین نمی‌کند و برای سرویس‌هایی مثل DNS، VoIP و ویدئو مناسب است. از نظر امنیت، UDP مستعد spoofing و amplification است چون state نگه نمی‌دارد و پاسخ‌ها می‌توانند به IP جعلی ارسال شوند.",
+    "hint": "- **حتماً به خاطر بسپار**: TCP = stateful، UDP = stateless.\n- UDP آسیب‌پذیر به spoofing.\n- TCP نیازمند handshake.",
+    "extra": "### سناریو Tier 3:\n- حمله DNS amplification از طریق UDP با IP جعلی که پاسخ‌های بزرگ DNS به قربانی می‌رسید.\n- تشخیص با بررسی packet capture و دیدن mismatch در flow state.\n\n### نکته:\n- سرویس‌های UDP باید rate-limit و ACL داشته باشند تا جلوی سوءاستفاده گرفته شود.",
+    "page": 3,
+    "Rel": "TCP,UDP,protocol,security,amplification",
+    "meta": {}
+  },
+  {
+    "id": "ch3_q3",
+    "type": "short",
+    "question": "ICMP anomaly detection چیست و چه نشانه‌هایی دارد؟",
+    "answer": "ICMP برای پیام‌های کنترل و خطا استفاده می‌شود، اما در حملات DoS، scanning یا tunneling می‌تواند سوءاستفاده شود. Anomalies شامل حجم غیرمعمول، نوع پیام غیرمنتظره (Type/Code)، یا sequence غیرعادی است. Tier 3 با baseline ترافیک ICMP می‌تواند تغییرات مشکوک را سریع شناسایی کند.",
+    "hint": "- **حتماً به خاطر بسپار**: baseline مهم است.\n- Type/Code غیرمنتظره = بررسی.\n- ICMP flood یک DoS است.",
+    "extra": "### سناریو:\n- کشف حجم بالای ICMP Echo Request به یک سرور داخلی.\n- بررسی نشان داد که مهاجم برای mapping شبکه استفاده می‌کند.\n\n### نکته Tier 3:\n- برخی بدافزارها از ICMP برای data exfiltration استفاده می‌کنند (ICMP tunneling).",
+    "page": 3,
+    "Rel": "ICMP,anomaly-detection,DoS,tunneling",
+    "meta": {}
+  },
+  {
+    "id": "ch3_q4",
+    "type": "short",
+    "question": "حمله Amplification چگونه کار می‌کند و چه مثال‌هایی دارد؟",
+    "answer": "در حملات Amplification، مهاجم با ارسال درخواست کوچک به یک سرویس عمومی (مثل DNS یا NTP) با IP قربانی، پاسخ بسیار بزرگ به سمت قربانی هدایت می‌کند. این باعث اشباع پهنای باند قربانی می‌شود. مثال‌ها شامل DNS amplification، NTP monlist، SSDP و memcached هستند.",
+    "hint": "- **حتماً به خاطر بسپار**: پاسخ ≫ درخواست.\n- IP spoofing عنصر کلیدی است.\n- سرویس باز = خطر.",
+    "extra": "### سناریو Tier 3:\n- شناسایی 10Gbps ترافیک DNS پاسخ به یک IP داخلی که خودش query نکرده بود.\n- تایید با بررسی QR flag و طول packet.\n\n### نکته:\n- جلوگیری با بستن سرویس‌های باز و استفاده از BCP38 در ISP.",
+    "page": 3,
+    "Rel": "amplification,DNS,NTP,SSDP,memcached",
+    "meta": {}
+  },
+  {
+    "id": "ch3_q5",
+    "type": "short",
+    "question": "Traceroute چگونه مسیر را مشخص می‌کند و چه کاربردی در IR دارد؟",
+    "answer": "Traceroute با ارسال بسته‌هایی با TTL افزایشی و دریافت پیام ICMP Time Exceeded از هر روتر در مسیر، مسیر رسیدن به مقصد را مشخص می‌کند. در IR، برای شناسایی مسیرهای شبکه و نقاط احتمالی فیلتر یا افت بسته استفاده می‌شود. گاهی مسیر ICMP با مسیر TCP واقعی متفاوت است.",
+    "hint": "- **حتماً به خاطر بسپار**: TTL کاهش می‌یابد.\n- ICMP Time Exceeded پاسخ روتر است.\n- مسیر ICMP ≠ مسیر TCP.",
+    "extra": "### سناریو:\n- بررسی مشکل ارتباط با سرور خارجی.\n- Traceroute نشان داد بسته‌ها در یک hop در ISP بلاک می‌شوند.\n\n### نکته Tier 3:\n- تفاوت مسیرها می‌تواند برای شناسایی path hijacking استفاده شود.",
+    "page": 3,
+    "Rel": "traceroute,TTL,ICMP,path-discovery",
+    "meta": {}
+  }
+]

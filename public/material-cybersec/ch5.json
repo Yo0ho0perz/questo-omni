@@ -1,0 +1,79 @@
+[
+  {
+    "id": "ch5_q1",
+    "type": "short",
+    "question": "DCSync چیست و چگونه شناسایی می‌شود؟",
+    "answer": "DCSync تکنیکی است که با شبیه‌سازی رفتار یک Domain Controller از طریق پروتکل‌های replication (MS-DRSR) داده‌های حساس مانند password hashها را از DC درخواست می‌کند. Tier 3 این حمله را با مانیتورینگ Event IDهای 4662، 4673 و 4742 و تشخیص درخواست‌های replication از سیستم‌های غیر DC کشف می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: فقط DCها replication می‌خواهند.\n- Event ID 4662 حساس است.",
+    "extra": "### سناریو:\n- سرور SQL ناگهان درخواست replication به DC ارسال کرد.\n- اقدام: بررسی سرویس‌ها، کشف Mimikatz با لاگ AV، ریست کردن رمز ادمین‌ها.",
+    "page": 5,
+    "Rel": "AD,DCSync,replication,Mimikatz",
+    "meta": {}
+  },
+  {
+    "id": "ch5_q2",
+    "type": "short",
+    "question": "Kerberoasting چیست و چگونه کشف می‌شود؟",
+    "answer": "Kerberoasting با درخواست Ticket Granting Service (TGS) برای اکانت‌های Service و کرک کردن آن آفلاین انجام می‌شود. Tier 3 این فعالیت را با Event ID 4769 (Service Ticket Request) و کشف الگوریتم RC4-HMAC شناسایی می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: الگوریتم ضعیف = کرک آسان.\n- 4769 با RC4-HMAC مشکوک است.",
+    "extra": "### سناریو:\n- چندین درخواست TGS از یک endpoint عادی.\n- اقدام: محدود کردن SPNها و فعال کردن AES فقط.",
+    "page": 5,
+    "Rel": "AD,Kerberoasting,SPN,TGS",
+    "meta": {}
+  },
+  {
+    "id": "ch5_q3",
+    "type": "short",
+    "question": "Pass-the-Hash و Over-Pass-the-Hash چه تفاوتی دارند؟",
+    "answer": "PTH استفاده مستقیم از NTLM hash برای احراز هویت بدون رمز عبور است. Over-Pass-the-Hash از hash برای گرفتن Kerberos TGT استفاده می‌کند. Tier 3 با لاگ‌گیری 4624 و 4768 و تحلیل logon type و anomalies تشخیص می‌دهد.",
+    "hint": "- **حتماً به خاطر بسپار**: PTH = NTLM مستقیم، OPTH = Kerberos با hash.",
+    "extra": "### سناریو:\n- ورود موفق از workstation غیرعادی با NTLMv2 hash.\n- اقدام: ریست hash و بررسی lateral movement.",
+    "page": 5,
+    "Rel": "AD,PTH,OPTH,NTLM,Kerberos",
+    "meta": {}
+  },
+  {
+    "id": "ch5_q4",
+    "type": "short",
+    "question": "AdminSDHolder abuse چیست؟",
+    "answer": "AdminSDHolder container در AD مجوزهای گروه‌های حفاظت‌شده را کنترل می‌کند. مهاجم می‌تواند ACL آن را تغییر دهد تا دسترسی دائمی به حساب‌ها داشته باشد. Tier 3 تغییرات در این container را با Event ID 5136 کشف می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: تغییر ACL = persistence.\n- Monitor 5136 روی AdminSDHolder.",
+    "extra": "### سناریو:\n- حساب test به گروه Domain Admin اضافه شد از طریق ACL.\n- اقدام: بازگرداندن ACL، بررسی تغییرات اخیر.",
+    "page": 5,
+    "Rel": "AD,AdminSDHolder,ACL,persistence",
+    "meta": {}
+  },
+  {
+    "id": "ch5_q5",
+    "type": "short",
+    "question": "Special Privileges abuse چه خطراتی دارد؟",
+    "answer": "Privilegeهایی مثل SeDebugPrivilege یا SeImpersonatePrivilege می‌توانند برای اجرای کد با سطح بالا یا سرقت token استفاده شوند. Tier 3 این سوءاستفاده را با Event ID 4672 و 4673 شناسایی می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: SeDebug = دسترسی پروسس‌ها، SeImpersonate = جعل هویت.",
+    "extra": "### سناریو:\n- بدافزار با SeImpersonatePrivilege به SYSTEM ارتقاء یافت.\n- اقدام: حذف privilege از اکانت‌های غیرضروری.",
+    "page": 5,
+    "Rel": "AD,privilege-escalation,SeDebug,SeImpersonate",
+    "meta": {}
+  },
+  {
+    "id": "ch5_q6",
+    "type": "short",
+    "question": "UAC bypass چگونه انجام و شناسایی می‌شود؟",
+    "answer": "UAC bypass با اجرای برنامه در حالت elevated بدون prompt کاربر انجام می‌شود، معمولاً با استفاده از LOLBin یا registry hijack. Tier 3 این فعالیت‌ها را با Event ID 4688، command-line logging و بررسی parent-child anomalies تشخیص می‌دهد.",
+    "hint": "- **حتماً به خاطر بسپار**: LOLBin + no prompt = bypass.\n- Parent-child chain را بررسی کن.",
+    "extra": "### سناریو:\n- mshta.exe با parent explorer.exe و بدون prompt اجرا شد.\n- اقدام: بلاک LOLBin در AppLocker.",
+    "page": 5,
+    "Rel": "AD,UAC-bypass,LOLBin,process-tree",
+    "meta": {}
+  },
+  {
+    "id": "ch5_q7",
+    "type": "short",
+    "question": "Lateral Movement چیست و چگونه شناسایی می‌شود؟",
+    "answer": "حرکت مهاجم بین سیستم‌ها برای گسترش دسترسی را lateral movement می‌گویند. تکنیک‌ها شامل SMB, WMI, RDP هستند. Tier 3 با تحلیل Event IDهای 4624، 4648، و 4672 و بررسی لاگ‌های firewall و Sysmon این فعالیت را شناسایی می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: SMB, WMI, RDP رایج‌اند.\n- Cross-host log correlation لازم است.",
+    "extra": "### سناریو:\n- حساب کاربری استاندارد روی چند سرور مختلف login کرد.\n- اقدام: بلاک حساب، بررسی مسیر حرکت با تحلیل لاگ.",
+    "page": 5,
+    "Rel": "AD,lateral-movement,SMB,WMI,RDP",
+    "meta": {}
+  }
+]

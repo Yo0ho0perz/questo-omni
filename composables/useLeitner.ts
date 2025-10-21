@@ -142,5 +142,23 @@ export function useLeitner(chapter: string, opts?: { debug?: boolean }) {
     return { done, due, wrong, star, entries: validEntries }
   }
 
-  return { state, record, markRevealed, toggleHighlight, reset, dueIds, makeStats }
+
+    /** Keep only entries whose ids are still present in material */
+  function reconcile(validIds: Set<string>) {
+    const s = state.value || {}
+    const out: Record<string, QuestionState> = {}
+    let changed = false
+
+    for (const id of Object.keys(s)) {
+      if (validIds.has(id)) out[id] = s[id]
+      else changed = true
+    }
+    if (changed) {
+      state.value = out
+      if (opts?.debug) console.info(`[leitner] reconciled ${chapter}: ${Object.keys(s).length} -> ${Object.keys(out).length}`)
+    }
+  }
+
+  return { state, record, markRevealed, toggleHighlight, reset, dueIds, makeStats, reconcile }
+
 }

@@ -1,0 +1,90 @@
+[
+  {
+    "id": "ch9_q1",
+    "type": "short",
+    "question": "inode چیست و چه کاربردی در لینوکس دارد؟",
+    "answer": "inode ساختاری در فایل‌سیستم لینوکس است که اطلاعات متادیتا درباره فایل (مالک، مجوز، timestamps، آدرس بلاک‌ها) را ذخیره می‌کند، اما نام فایل را نه. نام در directory entry ذخیره می‌شود.",
+    "hint": "- **حتماً به خاطر بسپار**: inode ≠ filename.\n- تغییر نام inode را تغییر نمی‌دهد.\n- stat command جزئیات inode را می‌دهد.",
+    "extra": "### سناریو:\n- فایل مخرب با تغییر نام مخفی شده بود.\n- با `find / -inum X` همان inode و مسیر واقعی پیدا شد.",
+    "page": 9,
+    "Rel": "inode,filesystem,metadata",
+    "meta": {}
+  },
+  {
+    "id": "ch9_q2",
+    "type": "short",
+    "question": "تفاوت Hardlink و Softlink چیست؟",
+    "answer": "Hardlink اشاره مستقیم به inode دارد و بعد از حذف فایل اصلی همچنان داده موجود است. Softlink یا symlink یک مسیر به فایل است و اگر فایل اصلی حذف شود، لینک خراب می‌شود.",
+    "hint": "- **حتماً به خاطر بسپار**: Hardlink ≠ دایرکتوری.\n- symlink مسیر را نگه می‌دارد.",
+    "extra": "### سناریو:\n- بدافزار با hardlink خود را به یک فایل سیستمی معتبر متصل کرده بود.",
+    "page": 9,
+    "Rel": "hardlink,softlink,inode",
+    "meta": {}
+  },
+  {
+    "id": "ch9_q3",
+    "type": "short",
+    "question": "/etc/passwd چه اطلاعاتی دارد؟",
+    "answer": "فایل /etc/passwd شامل لیست کاربران، UID، GID، مسیر home و shell پیش‌فرض است. قبلاً hash رمز عبور نیز اینجا ذخیره می‌شد اما اکنون در /etc/shadow قرار دارد.",
+    "hint": "- **حتماً به خاطر بسپار**: world-readable.\n- hash در passwd = خطرناک.",
+    "extra": "### سناریو:\n- passwd نشان داد کاربر مشکوک با UID=0 اضافه شده است.",
+    "page": 9,
+    "Rel": "/etc/passwd,users,UID,GID",
+    "meta": {}
+  },
+  {
+    "id": "ch9_q4",
+    "type": "short",
+    "question": "/etc/shadow چه کاربردی دارد؟",
+    "answer": "فایل /etc/shadow شامل hash رمز عبور کاربران است و فقط توسط root قابل خواندن است. Tier 3 در forensic این فایل را برای brute-force تست hash بررسی می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: مجوز 600.\n- hash + salt ذخیره شده.",
+    "extra": "### سناریو:\n- hash کاربر compromise شده و با john the ripper crack شد.",
+    "page": 9,
+    "Rel": "/etc/shadow,password-hash,root",
+    "meta": {}
+  },
+  {
+    "id": "ch9_q5",
+    "type": "short",
+    "question": "چطور از bash history برای Forensic استفاده می‌کنید؟",
+    "answer": "bash_history لیست آخرین دستورات کاربر را ذخیره می‌کند. با بررسی timestamps و sequence می‌توان رفتار مهاجم را بازسازی کرد. توجه: مهاجم می‌تواند history را حذف یا دستکاری کند.",
+    "hint": "- **حتماً به خاطر بسپار**: HISTTIMEFORMAT فعال کن.\n- تاریخچه همیشه کامل نیست.",
+    "extra": "### سناریو:\n- تاریخچه نشان داد اسکریپت exfiltration اجرا شده و بعد با `history -c` پاک شده.",
+    "page": 9,
+    "Rel": "bash,history,forensics",
+    "meta": {}
+  },
+  {
+    "id": "ch9_q6",
+    "type": "short",
+    "question": "auditd چه نقشی در امنیت لینوکس دارد؟",
+    "answer": "auditd لاگ‌برداری سطح کرنل از رویدادهای امنیتی انجام می‌دهد. Tier 3 از آن برای کشف تغییرات فایل‌های حساس یا اجرای باینری‌های مشکوک استفاده می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: قوانین دقیق تعریف کن.\n- لاگ‌ها در /var/log/audit.",
+    "extra": "### سناریو:\n- auditd تغییر /etc/shadow را توسط کاربر غیر-root ثبت کرد.",
+    "page": 9,
+    "Rel": "auditd,linux-security,logging",
+    "meta": {}
+  },
+  {
+    "id": "ch9_q7",
+    "type": "short",
+    "question": "چند دستور متداول لینوکس برای Hunting چیست؟",
+    "answer": "`netstat -tulnp`, `ps aux`, `find / -perm`, `grep -R`, `lsof -i`. این دستورات به Tier 3 کمک می‌کند تا processهای مشکوک، فایل‌های setuid، و اتصالات ناشناخته را شناسایی کند.",
+    "hint": "- **حتماً به خاطر بسپار**: ترکیب دستورات برای hunting بهتر.\n- grep سریع است ولی مراقب false positive باش.",
+    "extra": "### سناریو:\n- netstat نشان داد پورت 1337 در LISTEN با باینری ناشناخته باز است.",
+    "page": 9,
+    "Rel": "linux,commands,hunting",
+    "meta": {}
+  },
+  {
+    "id": "ch9_q8",
+    "type": "short",
+    "question": "Viper commands در لینوکس چه هستند؟",
+    "answer": "Viper مجموعه‌ای از اسکریپت‌ها و دستورات automation برای تحلیل سریع artifacts و memory در Linux و Windows است. در لینوکس برای جمع‌آوری شواهد و parsing لاگ استفاده می‌شود.",
+    "hint": "- **حتماً به خاطر بسپار**: Viper = automation hunting.\n- اسکریپت‌های قابل سفارشی‌سازی.",
+    "extra": "### تجربه عملی:\n- Viper برای جمع‌آوری logs و بررسی IOC در کل سرورها طی چند دقیقه.",
+    "page": 9,
+    "Rel": "Viper,linux,hunting,automation",
+    "meta": {}
+  }
+]

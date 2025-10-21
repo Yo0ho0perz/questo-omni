@@ -1,197 +1,31 @@
+<!-- pages/index.vue -->
 <script setup lang="ts">
-import { ref, computed, onMounted, watch, reactive, nextTick } from 'vue'
-import { useStorage } from '@vueuse/core'
-import { useMaterial } from '~/composables/useMaterial'
+import { storeToRefs } from 'pinia'
 import { RouterLink as NuxtLink } from 'vue-router'
+import { useMaterialStore } from '~/stores/material'
+import { useProgressStore } from '~/stores/progress'
+import type { Chapter } from '~/stores/material' // <-- typed Chapter
 
-/* -------------------- Types -------------------- */
-interface Chapter { id: string; title: string; desc?: string; coverage_items?: string[] }
-interface QuestionState {
-  box: number; next: number; highlight?: boolean; revealed?: boolean; revealedAt?: number;
-  lastText?: string; log: { t: number; ok: boolean }[]; lastChosen?: number
-}
-type LeitnerRef = ReturnType<typeof useStorage<Record<string, QuestionState>>>
+/* ---------- stores ---------- */
+const mat = useMaterialStore()
+const prog = useProgressStore()
+const { chapters, totals, idIndex, timeAgo, loading } = storeToRefs(mat)
 
-/* -------------------- Chapters data -------------------- */
-const { material: rawChapters, fetching, refetch, timeAgo } = useMaterial<Chapter>('chapters')
-const chapters = computed<Chapter[]>(() =>
-  Array.isArray(rawChapters.value)
-    ? rawChapters.value.map(ch => ({ ...ch, coverage_items: Array.isArray(ch.coverage_items) ? ch.coverage_items : [] }))
-    : []
-)
-
-/* -------------------- Client guard & prewarm -------------------- */
-const isClient = ref(false)
-
-async function prewarmAll(reason: string) {
-  if (!isClient.value) return
-  console.info(`[index] prewarmAll (${reason})`)
-  chapters.value.forEach(ch => {
-    const ref = getState(ch.id)
-    console.info(`[index]  ↳ ${ch.id} has ${Object.keys(ref.value || {}).length} items`)
-  })
-  await Promise.all(chapters.value.map(ch => ensureTotal(ch.id)))
-  await nextTick()
-  console.info('[index] snapshot after prewarm:', snapshotProgress())
-}
-
+/* ---------- lifecycle ---------- */
 onMounted(async () => {
-  isClient.value = true
-  console.info('[index] mounted; isClient=true')
-
-  if (!chapters.value.length) {
-    console.info('[index] chapters empty → refetch(true)')
-    await refetch(true)
-  } else {
-    console.info('[index] chapters present:', chapters.value.map(c => c.id))
-  }
-
-  await prewarmAll('onMounted')
-
-  // listen to cross-tab/localStorage changes (extra diagnostics)
-  if (typeof window !== 'undefined') {
-    window.addEventListener('storage', (e) => {
-      if (e.key && e.key.startsWith('leitner:')) {
-        console.info('[index] storage event:', e.key)
-      }
-    })
-  }
+  await mat.fetchChapters(true)
+  await nextTick()
+  const firstIds = (chapters.value || []).slice(0, 16).map(c => c.id)
+  await mat.ensureMany(firstIds)
 })
 
-// when chapters list changes (e.g., refetch), prewarm again
-watch(chapters, async (chs, old) => {
-  console.info('[index] chapters changed:', chs.map(c=>c.id))
-  await prewarmAll('chapters watch')
-}, { immediate: false })
+/* ---------- ui state ---------- */
+const searchTerm = ref<string>('')
+const filterMode = ref<'all' | 'done' | 'undone'>('all')
+const sortBy = ref<'alpha' | 'progress' | 'coverage' | 'recent'>('alpha')
 
-/* -------------------- Leitner state per chapter -------------------- */
-const states = reactive<Record<string, LeitnerRef>>({})
-
-function getState(chId: string): LeitnerRef {
-  if (!states[chId]) {
-    const key = `leitner:${chId}`
-    console.info(`[index] create useStorage for ${key}`)
-
-    // IMPORTANT: writeDefaults:false so we don't overwrite existing localStorage with {}
-    states[chId] = useStorage<Record<string, QuestionState>>(
-      key,
-      {},
-      undefined,
-      { mergeDefaults: true, listenToStorageChanges: true, writeDefaults: false }
-    )
-
-    // Manual hydrate (defensive): if ref is empty but LS has data, load it
-    try {
-      const raw = localStorage.getItem(key)
-      if (raw) {
-        const parsed = JSON.parse(raw)
-        if (parsed && typeof parsed === 'object' && !Object.keys(states[chId].value || {}).length) {
-          console.info(`[index] hydrating ${key} from localStorage with ${Object.keys(parsed).length} items`)
-          states[chId].value = parsed
-        }
-      }
-    } catch (e) {
-      console.warn(`[index] hydrate failed for ${key}`, e)
-    }
-
-    // deep watch for diagnostics
-    watch(states[chId], (val) => {
-      console.info(`[index] state changed for ${chId}: size=${Object.keys(val || {}).length}`)
-    }, { deep: true })
-  }
-  return states[chId]
-}
-
-/* -------------------- Totals per chapter (questions count) -------------------- */
-const totals = reactive<Record<string, number>>({})
-
-async function ensureTotal(chId: string) {
-  if (totals[chId] != null) return
-  try {
-    const cfg = useRuntimeConfig().public
-    // console.info(`[index] fetching /material/${chId}.json…`)
-    const data = await $fetch<any[]>(`/material/${chId}.json?ver=${cfg.appVersion}`)
-    totals[chId] = Array.isArray(data) ? data.length : 0
-    // console.info(`[index] totals[${chId}] = ${totals[chId]}`)
-  } catch (err) {
-    console.warn(`[index] totals fetch failed for ${chId}`, err)
-    totals[chId] = 0
-  }
-}
-
-/* -------------------- Derived Stats (computed off real refs) -------------------- */
-const doneMap = computed<Record<string, number>>(() => {
-  const m: Record<string, number> = {}
-  for (const ch of chapters.value) {
-    const s = isClient.value ? getState(ch.id).value : {}
-    m[ch.id] = s ? Object.keys(s).length : 0
-  }
-  return m
-})
-const dueMap = computed<Record<string, number>>(() => {
-  const m: Record<string, number> = {}
-  for (const ch of chapters.value) {
-    const s = isClient.value ? getState(ch.id).value : {}
-    m[ch.id] = s ? Object.values(s).filter(v => Date.now() >= (v.next || 0)).length : 0
-  }
-  return m
-})
-const wrongMap = computed<Record<string, number>>(() => {
-  const m: Record<string, number> = {}
-  for (const ch of chapters.value) {
-    const s = isClient.value ? getState(ch.id).value : {}
-    m[ch.id] = s ? Object.values(s).filter(v => v.log?.length && v.log.at(-1)!.ok === false).length : 0
-  }
-  return m
-})
-const starMap = computed<Record<string, number>>(() => {
-  const m: Record<string, number> = {}
-  for (const ch of chapters.value) {
-    const s = isClient.value ? getState(ch.id).value : {}
-    m[ch.id] = s ? Object.values(s).filter(v => v.highlight).length : 0
-  }
-  return m
-})
-const lastTouchedMap = computed<Record<string, number>>(() => {
-  const m: Record<string, number> = {}
-  for (const ch of chapters.value) {
-    const s = isClient.value ? getState(ch.id).value : {}
-    if (!s) { m[ch.id] = 0; continue }
-    const ts = Object.values(s).flatMap(v => [...(v.log?.map(l => l.t) || []), v.revealedAt || 0])
-    m[ch.id] = ts.length ? Math.max(...ts) : 0
-  }
-  return m
-})
-
-function snapshotProgress() {
-  const out: Record<string, any> = {}
-  chapters.value.forEach(ch => {
-    out[ch.id] = {
-      total: totals[ch.id] ?? 0,
-      done:  doneMap.value[ch.id] ?? 0,
-      due:   dueMap.value[ch.id] ?? 0,
-      wrong: wrongMap.value[ch.id] ?? 0,
-      star:  starMap.value[ch.id] ?? 0,
-      last:  lastTouchedMap.value[ch.id] ?? 0
-    }
-  })
-  return out
-}
-
-/* -------------------- Helpers -------------------- */
-const coverageCount = (chId: string) =>
-  chapters.value.find(c => c.id === chId)?.coverage_items?.length ?? 0
-
-const pct = (num: number, den: number) => (den > 0 ? Math.round((num / den) * 100) : 0)
-const chapterProgressPct = (chId: string) => {
-  if (!isClient.value) return 0
-  const total = totals[chId] ?? 0
-  const done  = doneMap.value[chId] ?? 0
-  if (total > 0) return pct(done, total)
-  const cov = coverageCount(chId)
-  return cov > 0 ? pct(done, cov) : 0
-}
-function shortTimeAgo(ts: number) {
+/* ---------- helpers ---------- */
+function shortTimeAgo(ts: number): string {
   if (!ts) return '—'
   const d = Date.now() - ts
   const m = Math.floor(d / 60000), h = Math.floor(m / 60), days = Math.floor(h / 24)
@@ -201,46 +35,31 @@ function shortTimeAgo(ts: number) {
   return 'لحظاتی پیش'
 }
 
-/* -------------------- UI state -------------------- */
-const searchTerm = ref('')
-const filterMode = ref<'all'|'done'|'undone'>('all')
-const sortBy = ref<'alpha'|'progress'|'coverage'|'recent'>('alpha')
+const coverageCount = (chId: string) =>
+  (chapters.value.find(c => c.id === chId)?.coverage_items?.length ?? 0)
 
-/* -------------------- Details Modal -------------------- */
-const detailsOpen = ref(false)
-const detailsFor  = ref<Chapter | null>(null)
-
-function openDetails(ch: Chapter) {
-  detailsFor.value = ch
-  detailsOpen.value = true
-  console.info('[index] openDetails:', ch.id, ch.title)
-}
-function closeDetails() {
-  detailsOpen.value = false
-  detailsFor.value = null
-}
-
-const detailsId = computed(() => detailsFor.value?.id ?? '')
-const detailsProgressPct = computed(() => detailsId.value ? chapterProgressPct(detailsId.value) : 0)
-const detailsStats = computed(() => {
-  const id = detailsId.value
-  if (!id) return { done: 0, total: 0, due: 0, wrong: 0, star: 0, last: 0 }
-  return {
-    done: doneMap.value[id] ?? 0,
-    total: totals[id] ?? 0,
-    due:  dueMap.value[id] ?? 0,
-    wrong: wrongMap.value[id] ?? 0,
-    star: starMap.value[id] ?? 0,
-    last: lastTouchedMap.value[id] ?? 0
+/** cache stats per chapter to avoid recomputing in template */
+const statsCache = computed<Record<string, { done: number; due: number; wrong: number; star: number; last: number }>>(() => {
+  const out: Record<string, any> = {}
+  for (const ch of chapters.value) {
+    const ids = idIndex.value[ch.id] || []
+    out[ch.id] = prog.statsFor(ch.id, ids)
   }
+  return out
 })
 
-/* -------------------- List -------------------- */
-const visibleChapters = computed(() => {
-  let list = chapters.value
+const progressPctFor = (chId: string) => {
+  const total = totals.value[chId] ?? 0
+  const done = statsCache.value[chId]?.done ?? 0
+  return total > 0 ? Math.round((done / total) * 100) : 0
+}
 
-  if (searchTerm.value.trim()) {
-    const term = searchTerm.value.trim().toLowerCase()
+/* ---------- visible list (typed) ---------- */
+const visibleChapters = computed<Chapter[]>(() => {
+  let list: Chapter[] = chapters.value || []
+
+  const term = searchTerm.value.trim().toLowerCase()
+  if (term) {
     list = list.filter(ch => {
       const inTitle = ch.title.toLowerCase().includes(term)
       const inDesc = (ch.desc || '').toLowerCase().includes(term)
@@ -249,32 +68,51 @@ const visibleChapters = computed(() => {
     })
   }
 
-  list = list.filter(ch => {
-    const hasProgress = (doneMap.value[ch.id] ?? 0) > 0
-    if (filterMode.value === 'done') return hasProgress
-    if (filterMode.value === 'undone') return !hasProgress
-    return true
-  })
+  if (filterMode.value !== 'all') {
+    list = list.filter(ch => {
+      const hasProgress = (statsCache.value[ch.id]?.done ?? 0) > 0
+      return filterMode.value === 'done' ? hasProgress : !hasProgress
+    })
+  }
 
   const sorted = [...list]
   if (sortBy.value === 'progress') {
-    sorted.sort((a, b) => chapterProgressPct(b.id) - chapterProgressPct(a.id))
+    sorted.sort((a, b) => progressPctFor(b.id) - progressPctFor(a.id))
   } else if (sortBy.value === 'coverage') {
-    sorted.sort((a, b) => (coverageCount(b.id) - coverageCount(a.id)) || (Number(a.id.replace(/^ch/, '')) - Number(b.id.replace(/^ch/, ''))))
+    sorted.sort((a, b) =>
+      (coverageCount(b.id) - coverageCount(a.id)) ||
+      (Number(a.id.replace(/^ch/, '')) - Number(b.id.replace(/^ch/, '')))
+    )
   } else if (sortBy.value === 'recent') {
-    sorted.sort((a, b) => (lastTouchedMap.value[b.id] - lastTouchedMap.value[a.id]) || (Number(a.id.replace(/^ch/, '')) - Number(b.id.replace(/^ch/, ''))))
+    sorted.sort((a, b) => {
+      const la = statsCache.value[a.id]?.last ?? 0
+      const lb = statsCache.value[b.id]?.last ?? 0
+      return (lb - la) ||
+        (Number(a.id.replace(/^ch/, '')) - Number(b.id.replace(/^ch/, '')))
+    })
   } else {
     sorted.sort((a, b) => Number(a.id.replace(/^ch/, '')) - Number(b.id.replace(/^ch/, '')))
   }
 
-  // ensure totals for first screen
-  sorted.slice(0, 16).forEach(ch => ensureTotal(ch.id))
+  // gentle prefetch for first screen
+  queueMicrotask(() => mat.ensureMany(sorted.slice(0, 16).map(c => c.id)))
   return sorted
 })
 
-// log when maps change
-watch([doneMap, dueMap, wrongMap, starMap, lastTouchedMap], () => {
-  console.info('[index] maps changed → snapshot:', snapshotProgress())
+/* ---------- details modal (typed) ---------- */
+const detailsOpen = ref<boolean>(false)
+const detailsFor = ref<Chapter | null>(null)
+
+function openDetails(ch: Chapter) { detailsFor.value = ch; detailsOpen.value = true }
+function closeDetails() { detailsOpen.value = false; detailsFor.value = null }
+
+const detailsStats = computed(() => {
+  const ch = detailsFor.value
+  if (!ch) return { done: 0, due: 0, wrong: 0, star: 0, last: 0, progressPct: 0, total: 0 }
+  const st = statsCache.value[ch.id] || { done: 0, due: 0, wrong: 0, star: 0, last: 0 }
+  const total = totals.value[ch.id] ?? 0
+  const progressPct = total > 0 ? Math.round((st.done / total) * 100) : 0
+  return { ...st, progressPct, total }
 })
 </script>
 
@@ -310,8 +148,8 @@ watch([doneMap, dueMap, wrongMap, starMap, lastTouchedMap], () => {
                   : 'مرتب‌سازی: عدد فصل'
           }}
         </button>
-        <button @click="refetch(true).then(()=>prewarmAll('manual refetch'))" :disabled="fetching" class="px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition disabled:opacity-50">
-          {{ fetching ? 'در حال بروزرسانی…' : 'بروزرسانی' }}
+        <button @click="mat.fetchChapters(true)" :disabled="loading" class="px-4 py-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 transition disabled:opacity-50">
+          {{ loading ? 'در حال بروزرسانی…' : 'بروزرسانی' }}
         </button>
       </div>
     </div>
@@ -319,7 +157,6 @@ watch([doneMap, dueMap, wrongMap, starMap, lastTouchedMap], () => {
     <!-- grid -->
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
       <div v-for="ch in visibleChapters" :key="ch.id" class="group relative flex flex-col border rounded-2xl p-6 bg-white hover:shadow-lg transition">
-        <!-- title link -->
         <NuxtLink :to="`/study/${ch.id}`" class="block">
           <h2 class="text-xl font-semibold mb-2 group-hover:text-indigo-600 transition">
             {{ ch.title }}
@@ -338,31 +175,28 @@ watch([doneMap, dueMap, wrongMap, starMap, lastTouchedMap], () => {
           </span>
         </div>
 
-        <!-- stats -->
         <div class="grid grid-cols-4 gap-2 text-[11px] mb-4">
           <div class="px-2 py-1 rounded-lg bg-gray-50 border text-gray-700 text-center">
-            پیشرفت<br><span class="font-semibold">{{ doneMap[ch.id] ?? 0 }}/{{ totals[ch.id] ?? '—' }}</span>
+            پیشرفت<br>
+            <span class="font-semibold">
+              {{ (statsCache[ch.id]?.done ?? 0) }}/{{ totals[ch.id] ?? '—' }}
+            </span>
           </div>
           <div class="px-2 py-1 rounded-lg bg-amber-50 border border-amber-200 text-amber-700 text-center">
-            Due<br><span class="font-semibold">{{ dueMap[ch.id] ?? 0 }}</span>
+            Due<br><span class="font-semibold">{{ statsCache[ch.id]?.due ?? 0 }}</span>
           </div>
           <div class="px-2 py-1 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-center">
-            غلط اخیر<br><span class="font-semibold">{{ wrongMap[ch.id] ?? 0 }}</span>
+            غلط اخیر<br><span class="font-semibold">{{ statsCache[ch.id]?.wrong ?? 0 }}</span>
           </div>
           <div class="px-2 py-1 rounded-lg bg-yellow-50 border border-yellow-200 text-yellow-700 text-center">
-            ★<br><span class="font-semibold">{{ starMap[ch.id] ?? 0 }}</span>
+            ★<br><span class="font-semibold">{{ statsCache[ch.id]?.star ?? 0 }}</span>
           </div>
         </div>
 
-        <!-- progress bar -->
-        <div class="mb-1">
-          <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-            <div class="h-full bg-indigo-500 transition-all" :style="{ width: chapterProgressPct(ch.id) + '%' }" />
-          </div>
-          <div class="mt-2 text-xs flex items-center justify-between text-gray-600">
-            <span>{{ chapterProgressPct(ch.id) }}%</span>
-            <span class="text-gray-400">آخرین فعالیت: {{ shortTimeAgo(lastTouchedMap[ch.id] || 0) }}</span>
-          </div>
+        <!-- progress bar + last touched -->
+        <div class="mt-2 text-xs flex items-center justify-between text-gray-600">
+          <span>{{ progressPctFor(ch.id) }}%</span>
+          <span class="text-gray-400">آخرین فعالیت: {{ shortTimeAgo(statsCache[ch.id]?.last || 0) }}</span>
         </div>
 
         <!-- actions -->
@@ -388,7 +222,6 @@ watch([doneMap, dueMap, wrongMap, starMap, lastTouchedMap], () => {
         <div class="flex items-start justify-between gap-4">
           <div class="min-w-0">
             <h3 class="text-2xl font-bold truncate">{{ detailsFor?.title }}</h3>
-            <!-- FIX: refs auto-unwrapped, use detailsStats.last NOT detailsStats.value.last -->
             <p class="text-xs text-gray-500 mt-1">آخرین فعالیت: {{ shortTimeAgo(detailsStats.last) }}</p>
           </div>
           <button class="p-2 rounded-lg hover:bg-gray-100" @click="closeDetails" aria-label="بستن">✕</button>
@@ -410,27 +243,23 @@ watch([doneMap, dueMap, wrongMap, starMap, lastTouchedMap], () => {
             ★<br><span class="font-semibold">{{ detailsStats.star }}</span>
           </div>
           <div class="px-2 py-1 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 text-center">
-            درصد<br><span class="font-semibold">{{ detailsProgressPct }}%</span>
+            درصد<br><span class="font-semibold">{{ detailsStats.progressPct }}%</span>
           </div>
         </div>
 
         <div class="mt-3">
           <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-            <div class="h-full bg-indigo-500 transition-all" :style="{ width: detailsProgressPct + '%' }" />
-          </div>
-        </div>
-
-        <div class="mt-5">
-          <div class="text-sm font-semibold mb-2">پوشش: {{ (detailsFor?.coverage_items?.length || 0) }} مورد</div>
-          <div class="flex flex-wrap gap-2">
-            <span v-for="(item, i) in (detailsFor?.coverage_items || [])" :key="i" class="text-[11px] px-2 py-1 rounded-full bg-gray-100 text-gray-700 border border-gray-200" :title="item">
-              {{ item }}
-            </span>
+            <div class="h-full bg-indigo-500 transition-all" :style="{ width: detailsStats.progressPct + '%' }" />
           </div>
         </div>
 
         <div class="mt-6 flex items-center justify-end gap-2">
-          <NuxtLink v-if="detailsFor" :to="`/study/${detailsFor.id}`" class="px-3 py-2 rounded-lg border border-indigo-200 text-indigo-700 hover:bg-indigo-50 text-sm" @click="closeDetails">
+          <NuxtLink
+            v-if="detailsFor"
+            :to="`/study/${detailsFor.id}`"
+            class="px-3 py-2 rounded-lg border border-indigo-200 text-indigo-700 hover:bg-indigo-50 text-sm"
+            @click="closeDetails"
+          >
             ادامهٔ مطالعه
           </NuxtLink>
           <button class="px-3 py-2 rounded-lg border text-sm hover:bg-gray-50" @click="closeDetails">بستن</button>

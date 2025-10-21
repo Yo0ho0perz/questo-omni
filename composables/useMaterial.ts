@@ -1,3 +1,4 @@
+// composables/useMaterial.ts
 import { useStorage, useTimeAgo, useIntervalFn } from '@vueuse/core'
 
 interface Stored<T> { data: T[]; fetched: number }

@@ -1,0 +1,68 @@
+[
+  {
+    "id": "ch8_q1",
+    "type": "short",
+    "question": "تفاوت Sysmon Event ID 1 و Event ID 4688 چیست؟",
+    "answer": "Sysmon Event ID 1 ایجاد یک process را با جزئیات کامل (hash، parent، command line) گزارش می‌دهد، درحالی‌که Event ID 4688 (Security log) ایجاد process را با اطلاعات محدودتر و بدون hash ثبت می‌کند. در Tier 3، Sysmon برای hunting دقیق‌تر استفاده می‌شود چون context کامل‌تری می‌دهد.",
+    "hint": "- **حتماً به خاطر بسپار**: Sysmon ≠ جایگزین Security log، بلکه مکمل آن است.\n- Sysmon hash و parent-child chain می‌دهد.\n- 4688 بدون hash است و ممکن است در noisy systems زیاد شود.",
+    "extra": "### سناریو عملی:\n- LSASS dump در یک endpoint رخ داد.\n- Sysmon ID 1 نشان داد process با parent powershell.exe اجرا شده.\n- Event 4688 وجود داشت ولی command line کوتاه و ناقص بود.\n- Tier 3 توصیه: Sysmon و Security log را correlate کن برای detection و cross-validation.\n\n### نکته Hunting:\n- اگر فقط 4688 دارید، می‌توانید از process GUID (Sysmon) یا process ID + زمان برای link کردن به parent استفاده کنید.",
+    "page": 8,
+    "Rel": "Sysmon,EventID,process-creation,hunting",
+    "meta": {}
+  },
+  {
+    "id": "ch8_q2",
+    "type": "short",
+    "question": "تفاوت Process ID و Process GUID در ویندوز چیست؟",
+    "answer": "Process ID (PID) یک عدد موقت است که سیستم به فرآیند فعال اختصاص می‌دهد و بعد از بسته شدن process ممکن است به process دیگری داده شود. Process GUID یک شناسه یکتا و دائمی برای آن instance است که Sysmon تولید می‌کند و در طول عمر process تغییر نمی‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: PID ممکن است recycle شود.\n- GUID = unique per process lifetime.\n- Sysmon GUID را برای correlation می‌سازد.",
+    "extra": "### تجربه Tier 3:\n- PID 1234 در دو زمان مختلف به دو process مختلف اشاره داشت.\n- استفاده از GUID باعث شد بتوانیم مسیر واقعی process malicious را دنبال کنیم بدون اینکه logها با PID قبلی اشتباه شوند.",
+    "page": 8,
+    "Rel": "PID,GUID,Sysmon,process-tracking",
+    "meta": {}
+  },
+  {
+    "id": "ch8_q3",
+    "type": "short",
+    "question": "چطور Dump شدن LSASS را شناسایی می‌کنید؟",
+    "answer": "LSASS dump اغلب با ابزارهایی مثل procdump.exe یا process hacker انجام می‌شود. Sysmon Event ID 10 (process access) یا EDR alert نشان می‌دهد که process مشکوک به LSASS دسترسی یافته. Command line شامل lsass.exe یا '-ma' در procdump می‌تواند شاخص باشد.",
+    "hint": "- **حتماً به خاطر بسپار**: LSASS = هدف اصلی credential theft.\n- Monitor کنید هر دسترسی به lsass.exe توسط غیر-SYSTEM.\n- Dump = فایل با اندازه چند مگابایت.",
+    "extra": "### سناریو Tier 3:\n- EDR هشدار داد procdump.exe اجرا شده.\n- Sysmon نشان داد دسترسی به PID LSASS.\n- Memory dump پیدا شد و تحلیل شد → credential compromise.\n\n### توصیه عملی:\n- Block process مثل procdump در کاربران غیر-admin.\n- Enable Credential Guard برای محافظت LSASS.",
+    "page": 8,
+    "Rel": "LSASS,dump,Sysmon,credential-theft",
+    "meta": {}
+  },
+  {
+    "id": "ch8_q4",
+    "type": "short",
+    "question": "AMSI چیست و چطور بدافزارها آن را bypass می‌کنند؟",
+    "answer": "AMSI (Antimalware Scan Interface) لایه‌ای در ویندوز است که کدهای اسکریپت (مثل PowerShell) را قبل از اجرا به آنتی‌ویروس می‌فرستد. مهاجمان با تغییر AMSI.dll در حافظه یا patch کردن تابع AmsiScanBuffer آن را bypass می‌کنند.",
+    "hint": "- **حتماً به خاطر بسپار**: AMSI = detection پیش از اجرا.\n- Bypass = memory patch، encoded scripts.\n- AMSI log در Event Viewer موجود است.",
+    "extra": "### تجربه واقعی:\n- Alert از AMSI نشان داد کد Base64 مشکوک decode می‌شود.\n- چند دقیقه بعد AMSI bypass با patch memory.\n- اقدام: Hunting روی load مشکوک AMSI.dll.\n\n### نکته Tier 3:\n- AMSI bypass می‌تواند IOC خوبی برای شناسایی حملات post-exploitation باشد.",
+    "page": 8,
+    "Rel": "AMSI,bypass,PowerShell,scan-interface",
+    "meta": {}
+  },
+  {
+    "id": "ch8_q5",
+    "type": "short",
+    "question": "مسیرهای متداول persistence در رجیستری چیست؟",
+    "answer": "مسیرهایی مثل `HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run` و `HKLM\\...\\Run` رایج‌ترین مکان برای اجرای خودکار بدافزار در لاگین هستند. Tier 3 این مسیرها را مرتباً مانیتور می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: Run و RunOnce کلیدهای اصلی persistence.\n- Autoruns مایکروسافت برای بررسی.",
+    "extra": "### سناریو:\n- Key جدید در HKCU\\...\\Run با نام AdobeUpdate ولی مسیر C:\\Temp.\n- اقدام: حذف key، اسکن سیستم.",
+    "page": 8,
+    "Rel": "registry,persistence,autorun,HKCU,HKLM",
+    "meta": {}
+  },
+  {
+    "id": "ch8_q6",
+    "type": "short",
+    "question": "UAC Bypass چگونه شناسایی می‌شود؟",
+    "answer": "UAC bypass با اجرای برنامه در سطح admin بدون prompt انجام می‌شود، معمولاً با سوءاستفاده از auto-elevate executables یا COM hijacking. Hunting شامل شناسایی اجرای غیرعادی از مسیر System32 با کاربر non-admin است.",
+    "hint": "- **حتماً به خاطر بسپار**: مسیرهای System32 + بدون logon type admin = مشکوک.\n- COM hijack کلید رجیستری را تغییر می‌دهد.",
+    "extra": "### سناریو:\n- mshta.exe از مسیر System32 اجرا شد توسط کاربر non-admin.\n- بررسی command line نشان داد UAC prompt bypass شده.",
+    "page": 8,
+    "Rel": "UAC,bypass,privilege-escalation",
+    "meta": {}
+  }
+]

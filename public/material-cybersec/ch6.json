@@ -1,0 +1,112 @@
+[
+  {
+    "id": "ch6_q1",
+    "type": "short",
+    "question": "فرآیند رمزنگاری HTTPS چگونه کار می‌کند؟",
+    "answer": "HTTPS از TLS برای ایجاد یک کانال امن بین کلاینت و سرور استفاده می‌کند. فرآیند شامل Handshake، تبادل کلید (RSA یا ECDHE)، احراز هویت سرور با گواهی دیجیتال، و سپس استفاده از symmetric encryption (AES, ChaCha20) برای داده است. Tier 3 در ترافیک رمز شده به شاخص‌هایی مثل cipher suite، TLS version، و گواهی‌های مشکوک برای تشخیص حملات (MITM، downgrade) توجه می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: TLS 1.3 امن‌تر از نسخه‌های قبل.\n- ECDHE = Forward Secrecy.\n- Verify CN/SAN در گواهی.",
+    "extra": "### سناریو واقعی:\n- downgrade attack به TLS 1.0 در یک سرویس مالی کشف شد.\n- Wireshark نشان داد cipher suite ضعیف (RC4) استفاده شده.\n- اقدام: محدود کردن نسخه TLS به 1.2+، فعال‌سازی HSTS.\n\n### نکته Tier 3:\n- حتی اگر داده رمز شده است، متادیتای ترافیک (SNI، طول بسته) می‌تواند نشانه حمله باشد.",
+    "page": 6,
+    "Rel": "TLS,HTTPS,encryption,handshake,cipher-suite",
+    "meta": {}
+  },
+  {
+    "id": "ch6_q2",
+    "type": "short",
+    "question": "PKI چیست و چه اجزایی دارد؟",
+    "answer": "Public Key Infrastructure سیستم مدیریت کلید عمومی است که شامل CA، RA، گواهی دیجیتال، CRL/OCSP و سیاست‌های مرتبط است. PKI تضمین می‌کند که کلید عمومی به هویت معتبر تعلق دارد. در Tier 3، PKI برای احراز هویت کاربر، سرور و امضای کد حیاتی است.",
+    "hint": "- **حتماً به خاطر بسپار**: CA ریشه باید offline باشد.\n- OCSP برای اعتبارسنجی زنده.",
+    "extra": "### تجربه SOC:\n- یک گواهی جعلی صادر شده برای دامنه داخلی شناسایی شد.\n- بررسی لاگ CA نشان داد compromise در RA.\n- اقدام: ابطال گواهی، بررسی کلاینت‌ها برای اعتماد به root ناخواسته.",
+    "page": 6,
+    "Rel": "PKI,CA,RA,certificate,OCSP,CRL",
+    "meta": {}
+  },
+  {
+    "id": "ch6_q3",
+    "type": "short",
+    "question": "الگوریتم‌های هش و کاربرد آن‌ها چیست؟",
+    "answer": "الگوریتم‌های هش مانند SHA-256 یا SHA-3 داده را به یک مقدار ثابت تبدیل می‌کنند. کاربرد: ذخیره امن رمز عبور (با salt)، اعتبارسنجی داده، امضای دیجیتال. Tier 3 از هش برای مقایسه فایل‌ها و شناسایی بدافزار استفاده می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: MD5 و SHA-1 ناامن‌اند.\n- Salt = جلوگیری از rainbow table.",
+    "extra": "### سناریو:\n- فایل مشکوک با هش SHA-256 در VirusTotal تطبیق داده شد.\n- اقدام: ایزوله کردن سیستم و گزارش IOC.",
+    "page": 6,
+    "Rel": "hash,SHA-256,SHA-3,salt,password-security",
+    "meta": {}
+  },
+  {
+    "id": "ch6_q4",
+    "type": "short",
+    "question": "Salt در ذخیره‌سازی رمز عبور چه نقشی دارد؟",
+    "answer": "Salt یک مقدار تصادفی است که قبل از هش کردن به رمز عبور اضافه می‌شود. این کار باعث می‌شود دو کاربر با رمز مشابه هش یکسان نداشته باشند و حملات rainbow table بی‌اثر شود.",
+    "hint": "- **حتماً به خاطر بسپار**: Salt = unique per password.\n- Salt باید ذخیره شود اما جدا از hash.",
+    "extra": "### نکته Tier 3:\n- در بررسی breach، نبود salt در DB باعث کرک سریع همه پسوردها شد.\n- توصیه: استفاده از PBKDF2, bcrypt, Argon2.",
+    "page": 6,
+    "Rel": "salt,password,hash,rainbow-table",
+    "meta": {}
+  },
+  {
+    "id": "ch6_q5",
+    "type": "short",
+    "question": "SPF چیست و چه کمکی به امنیت ایمیل می‌کند؟",
+    "answer": "SPF رکورد DNS است که لیست سرورهای مجاز ارسال ایمیل برای دامنه را مشخص می‌کند. این کار از spoofing جلوگیری می‌کند. Tier 3 هنگام تحلیل ایمیل، SPF result را بررسی می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: SPF = در DNS TXT.\n- محدودیت: محافظت در برابر فوروارد ندارد.",
+    "extra": "### سناریو:\n- SPF fail باعث قرنطینه ایمیل phishing شد.\n- اقدام: اصلاح رکورد SPF با IPهای صحیح.",
+    "page": 6,
+    "Rel": "SPF,email-security,DNS,anti-spoofing",
+    "meta": {}
+  },
+  {
+    "id": "ch6_q6",
+    "type": "short",
+    "question": "DKIM چیست و چگونه کار می‌کند؟",
+    "answer": "DomainKeys Identified Mail امضای دیجیتال برای بدنه و هدر ایمیل است. دریافت‌کننده با کلید عمومی در DNS صحت و تمامیت ایمیل را تأیید می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: DKIM = signature در هدر.\n- شکست = tampering محتمل.",
+    "extra": "### تجربه Tier 3:\n- DKIM fail در ایمیل داخلی نشان داد بدنه در مسیر تغییر کرده است.",
+    "page": 6,
+    "Rel": "DKIM,email-security,DNS,signature",
+    "meta": {}
+  },
+  {
+    "id": "ch6_q7",
+    "type": "short",
+    "question": "DMARC چیست و چه تفاوتی با SPF/DKIM دارد؟",
+    "answer": "DMARC سیاستی است که مشخص می‌کند اگر SPF یا DKIM شکست خورد، ایمیل reject، quarantine یا none شود. همچنین گزارش ارسال می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: DMARC = policy + report.\n- در DNS TXT ذخیره می‌شود.",
+    "extra": "### سناریو:\n- DMARC p=reject باعث بلاک phishing از دامنه legit ولی fail شده شد.",
+    "page": 6,
+    "Rel": "DMARC,SPF,DKIM,email-policy",
+    "meta": {}
+  },
+  {
+    "id": "ch6_q8",
+    "type": "short",
+    "question": "ssl.log در Zeek چه اطلاعاتی می‌دهد؟",
+    "answer": "ssl.log اطلاعات handshake TLS، نسخه، cipher، issuer و SNI را ثبت می‌کند. Tier 3 از آن برای کشف گواهی self-signed یا نسخه‌های ضعیف استفاده می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: ssl.log ≠ decrypt.\n- نسخه TLS را چک کن.",
+    "extra": "### سناریو:\n- ssl.log نشان داد سرویس از TLS 1.0 استفاده می‌کند.\n- اقدام: ارتقاء سرویس.",
+    "page": 6,
+    "Rel": "Zeek,ssl.log,TLS,handshake",
+    "meta": {}
+  },
+  {
+    "id": "ch6_q9",
+    "type": "short",
+    "question": "dpd.log در Zeek چه کاربردی دارد؟",
+    "answer": "dpd.log پروتکل واقعی را با پورت مقایسه می‌کند و mismatch را گزارش می‌دهد. این برای کشف tunneling یا misuse پورت مهم است.",
+    "hint": "- **حتماً به خاطر بسپار**: mismatch ≠ حمله اما مشکوک است.\n- کشف پورت 443 با HTTP.",
+    "extra": "### سناریو:\n- dpd.log نشان داد پورت 443 ترافیک HTTP داشت → tunneling.",
+    "page": 6,
+    "Rel": "Zeek,dpd.log,protocol-detection",
+    "meta": {}
+  },
+  {
+    "id": "ch6_q10",
+    "type": "short",
+    "question": "مدیریت کلید و انقضا در PKI چرا حیاتی است؟",
+    "answer": "کلید خصوصی باید امن نگه‌داشته شود، و گواهی‌ها باید قبل از انقضا تمدید شوند. Tier 3 هشدار expiry را برای جلوگیری از outage تنظیم می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: expiry = اعتبارسنجی شکست.\n- revoke در compromise.",
+    "extra": "### سناریو:\n- گواهی منقضی باعث توقف سرویس API شد.\n- اقدام: مانیتورینگ expiry همه گواهی‌ها.",
+    "page": 6,
+    "Rel": "PKI,key-management,expiry,revocation",
+    "meta": {}
+  }
+]

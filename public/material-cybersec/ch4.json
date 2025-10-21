@@ -1,0 +1,101 @@
+[
+  {
+    "id": "ch4_q1",
+    "type": "short",
+    "question": "چگونه تحلیل HTTP Status Code ها به شناسایی حملات کمک می‌کند؟",
+    "answer": "تحلیل توزیع و الگوهای غیرعادی کدهای وضعیت HTTP می‌تواند نشانه حملات باشد. افزایش ناگهانی 401/403 ممکن است به دلیل brute force یا credential stuffing باشد. افزایش 404 می‌تواند از directory/file enumeration ناشی شود. تغییرات غیرمنتظره در 3xx می‌تواند به misconfig یا حملات open redirect اشاره کند. در Tier 3، این داده‌ها با پارامترهایی مثل user-agent، src_ip و referrer برای کاهش false positive همبسته می‌شوند.",
+    "hint": "- **حتماً به خاطر بسپار**: 401/403 = auth probing.\n- 404 زیاد = path scan.\n- تغییر ناگهانی 3xx = redirect abuse.\n- Cross-correlate با دیگر لاگ‌ها.",
+    "extra": "### سناریوی واقعی:\n- حمله brute force به OWA باعث افزایش 401 در یک بازه 5 دقیقه‌ای شد.\n- Tier 3 با بررسی User-Agent و GeoIP متوجه شد که ترافیک از botnet توزیع شده می‌آید.\n- اقدام: Rule موقت در WAF، ارتباط با Threat Intel برای شناسایی subnets آلوده.\n\n### نکته پیشرفته:\n- مانیتورینگ درصد تغییر روزانه در status codes کمک می‌کند تا حملات slow-burn نیز شناسایی شوند.",
+    "page": 4,
+    "Rel": "HTTP,status-code,brute-force,enumeration,redirect",
+    "meta": {}
+  },
+  {
+    "id": "ch4_q2",
+    "type": "short",
+    "question": "XSS چیست و چه انواعی دارد و چگونه شناسایی می‌شود؟",
+    "answer": "XSS زمانی اتفاق می‌افتد که مهاجم بتواند اسکریپت دلخواه خود را در مرورگر قربانی اجرا کند. انواع: Stored (داده آلوده در DB ذخیره می‌شود)، Reflected (داده در پاسخ HTTP بازتاب داده می‌شود)، DOM-based (تغییر در DOM سمت کلاینت). Tier 3 از لاگ‌های WAF، CSP violation reports و تحلیل پارامترهای URL برای کشف الگوهای payload استفاده می‌کند. DOM-based معمولاً با dynamic analysis شناسایی می‌شود.",
+    "hint": "- **حتماً به خاطر بسپار**: Stored = در DB، Reflected = در پاسخ، DOM = کلاینت.\n- ابزار: Burp, ZAP, CSP reports.",
+    "extra": "### تجربه واقعی:\n- گزارش CSP violation نشان داد کد از یک دامنه غیرمجاز لود شده.\n- تحلیل HTML نشان داد که ورودی comment بدون escaping به صفحه تزریق شده است.\n- اقدام: sanitization ورودی و خروجی، افزودن CSP strict.\n\n### نکته Tier 3:\n- Payloadهای XSS ممکن است obfuscated باشند (JSFuck, Base64). کشف باید انعطاف‌پذیر باشد.",
+    "page": 4,
+    "Rel": "XSS,stored,reflected,DOM,WAF,CSP",
+    "meta": {}
+  },
+  {
+    "id": "ch4_q3",
+    "type": "short",
+    "question": "CSRF چگونه عمل می‌کند و چه تفاوتی با XSS دارد؟",
+    "answer": "CSRF کاربر معتبر را وادار به ارسال درخواست ناخواسته به وب‌سایت هدف می‌کند، با استفاده از اعتبار session فعلی. XSS کد مخرب را در مرورگر اجرا می‌کند، اما CSRF به کدی نیاز ندارد، فقط سوءاستفاده از درخواست قانونی. Tier 3 حملات CSRF را با بررسی وجود CSRF token و بررسی Referer/Origin شناسایی می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: CSRF = سوءاستفاده از session.\n- XSS = تزریق کد.\n- Token validation حیاتی است.",
+    "extra": "### سناریو:\n- مهاجم ایمیل حاوی لینک تغییر ایمیل برای کاربر ارسال کرد.\n- درخواست بدون CSRF token و با Origin مشکوک بود.\n- اقدام: افزودن SameSite cookie و token.\n\n### نکته:\n- ترکیب XSS و CSRF می‌تواند token را افشا کند و حمله را تقویت کند.",
+    "page": 4,
+    "Rel": "CSRF,XSS,session,token,mitigation",
+    "meta": {}
+  },
+  {
+    "id": "ch4_q4",
+    "type": "short",
+    "question": "SQL Injection چیست و چه انواعی دارد؟",
+    "answer": "SQLi زمانی رخ می‌دهد که ورودی کاربر بدون اعتبارسنجی در query SQL استفاده شود. انواع: Error-based، Union-based و Blind (boolean, time-based, out-of-band). در Tier 3، بررسی لاگ برنامه، payloadها و زمان پاسخ کمک به شناسایی می‌کند. Blind نیاز به تست شرایط منطقی یا تأخیر زمانی دارد.",
+    "hint": "- **حتماً به خاطر بسپار**: Prepared statement = ضد SQLi.\n- Blind = بدون خروجی مستقیم.",
+    "extra": "### تجربه عملی:\n- payload ' OR 1=1-- در پارامتر id مشاهده شد.\n- WAF نشان داد که خروجی SQL error به کاربر ارسال شده.\n- اقدام: فیلتر ورودی، محدود کردن پیام‌های خطا.\n\n### نکته Tier 3:\n- OOB channel می‌تواند DNS یا HTTP باشد، که نیاز به مانیتورینگ خارجی دارد.",
+    "page": 4,
+    "Rel": "SQLi,error,union,blind,OOB",
+    "meta": {}
+  },
+  {
+    "id": "ch4_q5",
+    "type": "short",
+    "question": "SOP چیست و چه نقشی در امنیت دارد؟",
+    "answer": "Same-Origin Policy محدودیت مرورگر برای جلوگیری از دسترسی اسکریپت‌ها به داده‌های دامنه دیگر است. Origin ترکیبی از scheme، host و port است. SOP مانع سرقت داده می‌شود. در Tier 3، تحلیل حملات bypass SOP از طریق misconfigured CORS یا postMessage اهمیت دارد.",
+    "hint": "- **حتماً به خاطر بسپار**: Origin = scheme+host+port.\n- CORS استثنا ایجاد می‌کند.",
+    "extra": "### سناریو:\n- CORS با wildcard باعث شد دامنه مهاجم داده‌ها را بخواند.\n- اقدام: محدود کردن به دامنه‌های مشخص، افزودن credentials=false.\n\n### نکته Tier 3:\n- SOP در API native enforce نمی‌شود، نیاز به validation جداگانه دارد.",
+    "page": 4,
+    "Rel": "SOP,CORS,origin,web-security",
+    "meta": {}
+  },
+  {
+    "id": "ch4_q6",
+    "type": "short",
+    "question": "CORS misconfiguration چه خطراتی دارد و چگونه شناسایی می‌شود؟",
+    "answer": "CORS با wildcard (*) و credentials=true باعث می‌شود هر دامنه‌ای بتواند داده حساس را بخواند. Tier 3 این misconfig را با تست درخواست از دامنه خارجی و تحلیل Access-Control-Allow-Origin/Allow-Credentials شناسایی می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: * + credentials = خطر.\n- Test با دامنه کنترل‌شده.",
+    "extra": "### سناریو:\n- مهاجم از دامنه خود درخواست به API هدف زد و داده کاربر را دریافت کرد.\n- اقدام: محدود کردن Origin و بررسی headerها در WAF.",
+    "page": 4,
+    "Rel": "CORS,misconfig,origin,API",
+    "meta": {}
+  },
+  {
+    "id": "ch4_q7",
+    "type": "short",
+    "question": "Log4j آسیب‌پذیری CVE-2021-44228 چیست و چگونه کشف می‌شود؟",
+    "answer": "Log4j JNDI lookup امکان تزریق remote code execution را می‌دهد. در Tier 3، شناسایی با جستجو برای الگوهایی مثل ${jndi:ldap:// در لاگ‌ها و تشخیص DNS/HTTP callback به دامنه‌های کنترل‌شده انجام می‌شود.",
+    "hint": "- **حتماً به خاطر بسپار**: ${jndi:ldap:// = خطر.\n- Monitor outbound DNS/HTTP.",
+    "extra": "### سناریو:\n- دامنه sinkhole ما درخواست از سرور آلوده دریافت کرد.\n- اقدام: Patch به نسخه 2.17 و حذف JNDI lookup class.",
+    "page": 4,
+    "Rel": "Log4j,JNDI,RCE,detection",
+    "meta": {}
+  },
+  {
+    "id": "ch4_q8",
+    "type": "short",
+    "question": "Fast Flux DNS چیست و چگونه شناسایی می‌شود؟",
+    "answer": "Fast Flux تکنیکی برای پنهان‌کردن IP واقعی با تغییر مداوم رکوردهای DNS (TTL پایین) است. Tier 3 با بررسی تعداد IP متفاوت در بازه کوتاه و TTL غیرعادی این رفتار را کشف می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: TTL پایین + IP زیاد.\n- Passive DNS مفید است.",
+    "extra": "### سناریو:\n- دامنه C2 هر دقیقه IP عوض می‌کرد.\n- اقدام: بلاک دامنه در DNS firewall و گزارش به CERT.",
+    "page": 4,
+    "Rel": "DNS,fast-flux,TTL,botnet",
+    "meta": {}
+  },
+  {
+    "id": "ch4_q9",
+    "type": "short",
+    "question": "TTL manipulation در DNS چه کاربردی در حمله دارد؟",
+    "answer": "مهاجم با TTL پایین می‌تواند سریع IP سرور را تغییر دهد (Fast Flux)، یا با TTL بالا cache poisoning را طولانی‌تر کند. Tier 3 این تغییرات را با baseline رکوردها مقایسه می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: TTL پایین = Fast Flux، TTL بالا = Poison persist.",
+    "extra": "### نکته عملی:\n- DNS logging باید فعال باشد تا تغییرات TTL دیده شود.",
+    "page": 4,
+    "Rel": "DNS,TTL,poisoning,fast-flux",
+    "meta": {}
+  }
+]

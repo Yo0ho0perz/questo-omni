@@ -4,13 +4,7 @@ import { version } from './package.json'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: [
-    '@nuxt/image',
-    '@nuxt/ui',
-    '@unocss/nuxt',
-    '@vueuse/nuxt',
-    '@vite-pwa/nuxt'
-  ],
+  modules: ['@nuxt/image', '@nuxt/ui', '@unocss/nuxt', '@vueuse/nuxt', '@vite-pwa/nuxt', '@pinia/nuxt'],
    runtimeConfig: {
     telegramBotToken: process.env.TELEGRAM_BOT_TOKEN,
     telegramChatIds: process.env.TELEGRAM_CHAT_IDS?.split(',') || [],
@@ -18,6 +12,9 @@ export default defineNuxtConfig({
         appVersion: version,
         refreshInterval: 6 * 60 * 60 * 1_000, // 6 h
       },
+  },
+  pinia: {
+    storesDirs: ['./stores/**'],
   },
 
   pwa: {

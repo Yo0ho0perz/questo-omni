@@ -1,0 +1,79 @@
+[
+  {
+    "id": "ch7_q1",
+    "type": "short",
+    "question": "SPF چگونه از spoofing جلوگیری می‌کند؟",
+    "answer": "SPF دامنه‌های مجاز ارسال ایمیل را مشخص می‌کند. Mail server دریافت‌کننده رکورد SPF را بررسی می‌کند تا بداند آیا IP فرستنده مجاز است یا نه.",
+    "hint": "- **حتماً به خاطر بسپار**: SPF در DNS TXT.\n- SPF fail = مشکوک.",
+    "extra": "### سناریو:\n- SPF fail باعث reject ایمیل با from جعلی شد.\n- اقدام: افزودن رکوردهای مجاز در SPF.",
+    "page": 7,
+    "Rel": "SPF,email-security,anti-spoofing",
+    "meta": {}
+  },
+  {
+    "id": "ch7_q2",
+    "type": "short",
+    "question": "DKIM چه مشکلی را حل می‌کند؟",
+    "answer": "DKIM اطمینان می‌دهد که محتوا از زمان ارسال تا دریافت تغییر نکرده و واقعاً از دامنه فرستنده آمده است.",
+    "hint": "- **حتماً به خاطر بسپار**: signature با private key.\n- Public key در DNS.",
+    "extra": "### تجربه Tier 3:\n- ایمیل phishing DKIM fail داشت، نشانه tampering.",
+    "page": 7,
+    "Rel": "DKIM,email-integrity,DNS",
+    "meta": {}
+  },
+  {
+    "id": "ch7_q3",
+    "type": "short",
+    "question": "DMARC چه نقشی در امنیت ایمیل دارد؟",
+    "answer": "DMARC سیاست نحوه برخورد با ایمیل‌هایی که SPF یا DKIM fail می‌شوند را تعیین می‌کند و گزارش‌دهی فراهم می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: policy = reject/quarantine/none.\n- Reporting حیاتی است.",
+    "extra": "### سناریو:\n- p=reject باعث بلاک spoofing در دامنه بانکی شد.",
+    "page": 7,
+    "Rel": "DMARC,email-policy,reporting",
+    "meta": {}
+  },
+  {
+    "id": "ch7_q4",
+    "type": "short",
+    "question": "چگونه phishing را از طریق header ایمیل شناسایی می‌کنید؟",
+    "answer": "بررسی Received chain، From/Reply-To mismatch، SPF/DKIM/DMARC result، و anomalies در User-Agent و X-Mailer. Tier 3 از ابزارهایی مثل MxToolbox و header analysis script استفاده می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: mismatch = مشکوک.\n- Received باید chain منطقی داشته باشد.",
+    "extra": "### تجربه عملی:\n- From بانکی، Reply-To دامنه free mail.\n- اقدام: قرنطینه و گزارش IOC.",
+    "page": 7,
+    "Rel": "phishing,email-header,analysis",
+    "meta": {}
+  },
+  {
+    "id": "ch7_q5",
+    "type": "short",
+    "question": "BEC Attack چیست و چگونه تشخیص داده می‌شود؟",
+    "answer": "Business Email Compromise حمله‌ای است که مهاجم به اکانت ایمیل بیزینسی دسترسی پیدا می‌کند و درخواست‌های مالی جعلی می‌فرستد. Tier 3 از بررسی login از کشور ناشناخته و تغییرات rules ایمیل برای کشف آن استفاده می‌کند.",
+    "hint": "- **حتماً به خاطر بسپار**: GeoIP login + rule change = مشکوک.\n- MFA کاهش ریسک.",
+    "extra": "### سناریو:\n- rule برای فوروارد همه ایمیل‌ها به دامنه خارجی اضافه شد.",
+    "page": 7,
+    "Rel": "BEC,email-compromise,rule-change",
+    "meta": {}
+  },
+  {
+    "id": "ch7_q6",
+    "type": "short",
+    "question": "Spoofing Prevention چگونه انجام می‌شود؟",
+    "answer": "ترکیب SPF، DKIM، و DMARC با policy سختگیرانه. Tier 3 policyهای DMARC را مانیتور می‌کند تا در failهای false positive کاهش دهند.",
+    "hint": "- **حتماً به خاطر بسپار**: ترکیب سه‌گانه امنیتی.\n- Fail rate را مانیتور کن.",
+    "extra": "### نکته Tier 3:\n- اجرای p=reject بدون تست می‌تواند ایمیل legit را بلاک کند.",
+    "page": 7,
+    "Rel": "spoofing,SPF,DKIM,DMARC",
+    "meta": {}
+  },
+  {
+    "id": "ch7_q7",
+    "type": "short",
+    "question": "تحلیل بدافزار در attachment ایمیل چگونه انجام می‌شود؟",
+    "answer": "Attachment ابتدا در sandbox باز می‌شود، سپس hash آن با پایگاه IOC مقایسه می‌شود. Macro analysis برای فایل‌های Office و static/dynamic analysis برای PE.",
+    "hint": "- **حتماً به خاطر بسپار**: sandbox = رفتار واقعی.\n- Hash match سریع است.",
+    "extra": "### سناریو:\n- doc با macro auto-run بدافزار دانلود کرد.\n- اقدام: قرنطینه و YARA rule.",
+    "page": 7,
+    "Rel": "email,attachment,malware-analysis",
+    "meta": {}
+  }
+]
